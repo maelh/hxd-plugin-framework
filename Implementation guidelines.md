@@ -108,5 +108,5 @@ for wchar_t*) as exemplified by the wrapper function str2int() in StrUtils.cpp.
 Delphi's (Try)StrToInt/(Try)StrToFloat already respect the locale and handle
 widestrings fine. There are similar functions for other basic data types,
 eventhough you are likely to have to write your own for special datatypes, where
-the notes above matter (respecting locale, flexible input syntax, etc.)
+the notes above matter (respecting locale, flexible input syntax, etc.).
 
