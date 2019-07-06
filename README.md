@@ -57,9 +57,9 @@ HxD.exe                  \  both 32
 Plugins\<AnyName>.dll    /  or 64 bit
 ```
 
-Use the development version of HxD, to test / develop your plugins:
+Use HxD 2.3 or higher to test / develop your plugins (using the portable is simpler, since creating a Plugins directory doesn't require admin rights):
 
-https://mh-nexus.de/downloads/HxDDevelEnu.zip
+https://mh-nexus.de/en/downloads.php?product=HxD20
 
 
 ### Non-OO interface: plain Delphi / plain C
