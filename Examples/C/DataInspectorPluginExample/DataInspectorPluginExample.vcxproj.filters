@@ -15,41 +15,38 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataInspectorPluginExample.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="dllmain.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataInspectorPluginServer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DataInspectorPluginExample.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CStrUtils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\..\..\Interface\C\DataInspectorPluginInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\Interface\C\DataInspectorShared.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Interface\C++\DataInspectorPluginServer.h">
+    <ClInclude Include="DataInspectorPluginServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StrUtils.h">
+    <ClInclude Include="DataInspectorPluginExample.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\C\DataInspectorPluginExample\CStrUtils.h">
+    <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\C\DataInspectorPluginExample\CStrUtils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataInspectorPluginExample.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dllmain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\Interface\C++\DataInspectorPluginServer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StrUtils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClInclude Include="CStrUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="DataInspectorPluginExample.def">

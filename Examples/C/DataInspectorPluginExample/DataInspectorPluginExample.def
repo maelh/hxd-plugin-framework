@@ -1,0 +1,3 @@
+LIBRARY   DataInspectorPluginExample
+EXPORTS
+	GetDataTypeConverters @1

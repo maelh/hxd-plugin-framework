@@ -9,3 +9,11 @@ __history
 /Examples/C++/DataInspectorPluginExample/x64
 /Examples/C++/DataInspectorPluginExample/Debug
 /Examples/C++/DataInspectorPluginExample/Release
+/Examples/C/x64
+/Examples/C/Debug
+/Examples/C/Release
+/Examples/C/DataInspectorPluginExample/x64
+/Examples/C/DataInspectorPluginExample/Debug
+/Examples/C/DataInspectorPluginExample/Release
+/Examples/C++/DataInspectorPluginExample/DataInspectorPluginExample.vcxproj.user
+/Examples/C/DataInspectorPluginExample/DataInspectorPluginExample.vcxproj.user

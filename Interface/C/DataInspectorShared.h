@@ -1,5 +1,9 @@
 #pragma once
 
+#ifdef __cplusplus  
+extern "C" {
+#endif 
+
 #include "inttypes.h"
 
 typedef enum TByteOrder {
@@ -32,3 +36,7 @@ typedef enum TStrToBytesError {
 	stbeNone, stbeInvalidString, stbeUnderflow, stbeOverflow,
 	stbeOutOfRange // if unclear whether underflow or overflow
 } TStrToBytesError;
+
+#ifdef __cplusplus  
+}
+#endif
