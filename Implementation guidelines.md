@@ -84,7 +84,7 @@ be treated as valid encodings of the same value.
 
 ### Short version
 
-Use strtol/wcstol (and similar). See str2int() in StrUtils.cpp for a correct
+Use strtol/wcstol (and similar). See str2int() in CStrUtils.c for a correct
 wrapper that takes care of all the necessary subtleties. A str2float() would use
 strtof/wcstof in a similar way, to handle single precision floats.
 
@@ -100,13 +100,13 @@ sscanf / swscanf and istringstream are a bit heavy weight, and also not as easy
 or reliable to detect errors conditions.
 
 Instead use a function of the strtol family (or in our case wcstol,
-for wchar_t*) as exemplified by the wrapper function str2int() in StrUtils.cpp.
+for wchar_t*) as exemplified by the wrapper function str2int() in CStrUtils.c.
 
 
 ## Which standard Delphi type conversion function to use?
 
-Delphi's (Try)StrToInt/(Try)StrToFloat already respect the locale and handle
+Delphi's (Try)StrToInt/(Try)StrToFloat already respect the locale and handles
 widestrings fine. There are similar functions for other basic data types,
-eventhough you are likely to have to write your own for special datatypes, where
-the notes above matter (respecting locale, flexible input syntax, etc.).
+eventhough you are likely to have to write your own ones for special data types,
+where the notes above matter (respecting locale, flexible input syntax, etc.).
 
