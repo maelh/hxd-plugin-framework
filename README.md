@@ -27,10 +27,11 @@ translated to strings and strings to byte sequences.
 
 ## Coding conventions
 
-Identifiers are named in a Delphi-typical manner, also in the C++ version, to
-make it easier to keep the interfaces in both languages in synch (the original
-being in Delphi, just like HxD itself). That means types begin with a T and
-pointer types begin with a P. Fields (member variables in C++) begin with an F.
+Identifiers are named in a Delphi-typical manner, also in the C and C++
+versions, to make it easier to keep the interfaces in all languages in synch
+(the original being in Delphi, just like HxD itself). That means types begin
+with a T and pointer types begin with a P. Fields (member variables in C++)
+begin with an F.
 
 This concerns contributions to the plugin framework itself. You are free to use
 your own coding conventions for your plugins, obviously.
@@ -57,7 +58,8 @@ HxD.exe                  \  both 32
 Plugins\<AnyName>.dll    /  or 64 bit
 ```
 
-Use HxD 2.3 or higher to test / develop your plugins (using the portable is simpler, since creating a Plugins directory doesn't require admin rights):
+Use HxD 2.3 or higher to test / develop your plugins (using the portable is
+simpler, since creating a Plugins directory does not require admin rights):
 
 https://mh-nexus.de/en/downloads.php?product=HxD20
 
@@ -84,7 +86,8 @@ variable or a member variable, and return a reference to it. Keep the variable
 unchanged until BytesToStr() is called again.
 
 See the OO interface for an implementation of this strategy, if you need more
-details. Otherwise, just use the simple OO solution directly (see below).
+details, or refer to the plain C example. If possible, use the simple OO
+solution directly (see below).
 
 
 ### OO interface (more comfortable): Delphi / C++
@@ -129,16 +132,16 @@ Debugging works like debugging any DLL project.
 
 ## Publishing your plugin
 
-If you wrote a plugin that you would like to share (link from here or my website), please contact me by mail,
-so we can discuss the details.
+If you wrote a plugin that you would like to share (link from here or my
+website), please contact me by mail, so we can discuss the details.
 
 
 ## License
 
 Copyright (C) 2019 Maël Hörz
 
-The plugin framework is [licensed under the MPL](LICENSE). But you are welcome to contact
-me if another open source license would be more suitable.
+The plugin framework is [licensed under the MPL](LICENSE). But you are welcome
+to contact me if another open source license would be more suitable.
 
 
 ## Contact
