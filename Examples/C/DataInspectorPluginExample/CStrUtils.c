@@ -15,6 +15,8 @@ wchar_t* wcsclone(const wchar_t* str)
     size_t len = wcslen(str) + 1;
     wchar_t* result = malloc(len * sizeof(wchar_t));
     wmemcpy(result, str, len);
+
+    return result;
 }
 
 wchar_t* trim(wchar_t* str)
@@ -68,6 +70,41 @@ TStrToBytesError str2int(const wchar_t* str, long* res, int base)
         if (*res == LONG_MIN)
             converr = stbeUnderflow;
         else if (*res == LONG_MAX)
+            converr = stbeOverflow;
+    }
+
+    errno = saved_errno; // be transparent to other stdlib functions
+    return converr;
+}
+
+TStrToBytesError str2uint(const wchar_t* str, unsigned long* res, int base)
+{
+    // reject leading whitespace
+    if (str == NULL || iswspace(str[0]))
+        return stbeInvalidString;
+
+    TStrToBytesError converr = stbeNone;
+
+    // Reset errno to 0, for reliable evaluation later on. (Because, with a few
+    // specific exceptions in stdlib, where documented, errno is only updated
+    // when an error occurs.)
+    int saved_errno = errno;
+    errno = 0;
+
+    wchar_t* endptr;
+    *res = wcstoul(str, &endptr, base);
+
+    if (str == endptr || // nothing was converted (empty string or invalid 
+                         // integer characters)
+        *endptr != '\0') // unallowed characters after the last valid digit
+    {
+        converr = stbeInvalidString;
+    }
+    else if (errno == ERANGE)
+    {
+        if (*res == 0)
+            converr = stbeUnderflow;
+        else if (*res == ULONG_MAX)
             converr = stbeOverflow;
     }
 

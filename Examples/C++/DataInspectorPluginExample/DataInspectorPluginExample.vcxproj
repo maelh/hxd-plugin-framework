@@ -161,13 +161,13 @@
     </ClInclude>
     <ClInclude Include="..\..\..\Interface\C++\DataInspectorPluginServer.h" />
     <ClInclude Include="..\..\..\Interface\C\DataInspectorShared.h" />
-    <ClInclude Include="DataInspectorPluginExample.h" />
+    <ClInclude Include="Int32Converter.h" />
     <ClInclude Include="StrUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\C\DataInspectorPluginExample\CStrUtils.c" />
     <ClCompile Include="..\..\..\Interface\C++\DataInspectorPluginServer.cpp" />
-    <ClCompile Include="DataInspectorPluginExample.cpp" />
+    <ClCompile Include="Int32Converter.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="StrUtils.cpp" />
   </ItemGroup>

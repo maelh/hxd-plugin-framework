@@ -9,38 +9,43 @@
 class TExternalDataTypeConverter
 {
 public:
-	TExternalDataTypeConverter();
+    TExternalDataTypeConverter();
 
-	virtual void Assign(TExternalDataTypeConverter* Source);
+    virtual void Assign(TExternalDataTypeConverter* Source);
 
-	virtual void ChangeByteOrder(uint8_t* Bytes, int ByteCount,
-		TByteOrder TargetByteOrder) = 0;
-	virtual TBytesToStrError BytesToStr(uint8_t* Bytes, int ByteCount,
-		TIntegerDisplayOption IntegerDisplayOption, int& ConvertedBytesCount,
-		std::wstring& ConvertedStr) = 0;
-	virtual TStrToBytesError StrToBytes(std::wstring Str,
-		TIntegerDisplayOption IntegerDisplayOption,
-		std::vector<uint8_t>& ConvertedBytes) = 0;
+    virtual void ChangeByteOrder(uint8_t* Bytes, int ByteCount,
+        TByteOrder TargetByteOrder) = 0;
+    virtual TBytesToStrError BytesToStr(uint8_t* Bytes, int ByteCount,
+        TIntegerDisplayOption IntegerDisplayOption, int& ConvertedBytesCount,
+        std::wstring& ConvertedStr) = 0;
+    virtual TStrToBytesError StrToBytes(std::wstring Str,
+        TIntegerDisplayOption IntegerDisplayOption,
+        std::vector<uint8_t>& ConvertedBytes) = 0;
 
 protected:
-	std::wstring FName;
-	TDataTypeWidth FWidth;
-	int FMaxTypeSize;
-	TByteOrders FSupportedByteOrders;
+    std::wstring FName;
+    TDataTypeWidth FWidth;
+    int FMaxTypeSize;
+    TByteOrders FSupportedByteOrders;
+
+private:
+    std::wstring FLastReturnedString;
+    std::vector<uint8_t> FLastReturnedByteArray;
+    friend class TRawToClassAdapter;
 
 // Getters
 public:
-	const std::wstring& GetName() { return FName; }
-	const TDataTypeWidth& GetWidth() { return FWidth; }
-	const int& GetMaxTypeSize() { return FMaxTypeSize; }
-	const TByteOrders& GetSupportedByteOrders() { return FSupportedByteOrders; }
+    const std::wstring& GetName() { return FName; }
+    const TDataTypeWidth& GetWidth() { return FWidth; }
+    const int& GetMaxTypeSize() { return FMaxTypeSize; }
+    const TByteOrders& GetSupportedByteOrders() { return FSupportedByteOrders; }
 };
 
 // Class factory function / virtual constructor
 typedef TExternalDataTypeConverter* (*TExternalDataTypeConverterFactoryFunction)();
 
 BOOL __stdcall GetDataTypeConverters(
-	PDataTypeConverterPluginInterface* ConvInterfaces, int* ConvInterfaceCount);
+    PDataTypeConverterPluginInterface* ConvInterfaces, int* ConvInterfaceCount);
 
 void RegisterDataTypeConverter(
-	TExternalDataTypeConverterFactoryFunction FactoryFunction);
+    TExternalDataTypeConverterFactoryFunction FactoryFunction);

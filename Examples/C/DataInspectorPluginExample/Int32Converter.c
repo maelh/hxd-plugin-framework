@@ -1,5 +1,3 @@
-#include "DataInspectorPluginExample.h"
-
 #include <stdio.h>      
 #include <stdint.h>     
 #include <inttypes.h>
@@ -7,6 +5,8 @@
 
 #include "utils.h"
 #include "CStrUtils.h"
+
+#include "Int32Converter.h"
 
 // This is the most basic implementation in C, which defines a new set of
 // functions (refer to TDataTypeConverterPluginInterface) for each data type
@@ -38,7 +38,7 @@
 // DeleteConverter is called.
 
 
-typedef struct TExampleDTCInstance {
+typedef struct TInt32ConverterInstance {
     // NOTE: the array sizes were chosen statically for the int32_t type, but
     // you may need to dynamically allocate memory for other types to not waste
     // memory; in this case, make sure to allocate and initialize in
@@ -50,7 +50,7 @@ typedef struct TExampleDTCInstance {
     // comment at file start).
     wchar_t ConvertedStr[128]; // smaller should be fine, but depends on formatting
     uint8_t ConvertedBytes[sizeof(int32_t)];
-} TExampleDTCInstance;
+} TInt32ConverterInstance;
 
 void* __stdcall CreateConverter(TConverterType ConvType, const wchar_t** Name,
     TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders)
@@ -59,15 +59,15 @@ void* __stdcall CreateConverter(TConverterType ConvType, const wchar_t** Name,
     // and to ease the implementation of constructor delegates.
     // See the Delphi and C++ examples to see how this is used to call the right
     // class constructors or factory functions in a generic manner.
-    assert(ConvType == &ExampleDTCClass); 
+    assert(ConvType == &Int32ConverterIntf);
 
     *Name = L"C - Int32";
     *Width = dtwFixed;
     *MaxTypeSize = sizeof(int32_t);
     *SupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
 
-    TExampleDTCInstance* Converter = malloc(sizeof(TExampleDTCInstance));
-    memset(Converter, 0, sizeof(TExampleDTCInstance));
+    TInt32ConverterInstance* Converter = malloc(sizeof(TInt32ConverterInstance));
+    memset(Converter, 0, sizeof(TInt32ConverterInstance));
     return Converter;
 }
 
@@ -78,13 +78,13 @@ void __stdcall DeleteConverter(void* Converter)
 
 void __stdcall AssignConverter(void* ThisPtr, void* Source)
 {
-    memcpy(((TExampleDTCInstance*)ThisPtr)->ConvertedBytes,
-        ((TExampleDTCInstance*)Source)->ConvertedBytes,
-        FIELD_SIZEOF(TExampleDTCInstance, ConvertedBytes));
+    memcpy(((TInt32ConverterInstance*)ThisPtr)->ConvertedBytes,
+        ((TInt32ConverterInstance*)Source)->ConvertedBytes,
+        FIELD_SIZEOF(TInt32ConverterInstance, ConvertedBytes));
 
-    memcpy(((TExampleDTCInstance*)ThisPtr)->ConvertedStr,
-        ((TExampleDTCInstance*)Source)->ConvertedStr,
-        FIELD_SIZEOF(TExampleDTCInstance, ConvertedStr));
+    memcpy(((TInt32ConverterInstance*)ThisPtr)->ConvertedStr,
+        ((TInt32ConverterInstance*)Source)->ConvertedStr,
+        FIELD_SIZEOF(TInt32ConverterInstance, ConvertedStr));
 }
 
 void __stdcall ChangeByteOrder(void* ThisPtr, uint8_t* Bytes, int ByteCount,
@@ -101,6 +101,8 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
     int ByteCount, TIntegerDisplayOption IntegerDisplayOption,
     int* ConvertedByteCount, const wchar_t** ConvertedStr)
 {
+    TInt32ConverterInstance* Converter = ((TInt32ConverterInstance*)ThisPtr);
+
     if (ByteCount >= sizeof(int32_t))
     {
         *ConvertedByteCount = sizeof(int32_t);
@@ -119,11 +121,9 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
             break;
         }
 
-        swprintf(((TExampleDTCInstance*)ThisPtr)->ConvertedStr,
-            ARRAY_LENGTH(((TExampleDTCInstance*)ThisPtr)->ConvertedStr),
+        swprintf(Converter->ConvertedStr, ARRAY_LENGTH(Converter->ConvertedStr),
             FormatStr, *(int32_t*)(Bytes));
-
-        *ConvertedStr = ((TExampleDTCInstance*)ThisPtr)->ConvertedStr;
+        *ConvertedStr = Converter->ConvertedStr;
 
         return btseNone;
     }
@@ -143,6 +143,8 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     static_assert(sizeof(long) >= sizeof(int32_t),
         "str2int must return an integer of at least sizeof(int32_t)");
 
+    TInt32ConverterInstance* Converter = ((TInt32ConverterInstance*)ThisPtr);
+
     int base;
     switch (IntegerDisplayOption)
     {
@@ -158,11 +160,21 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     long I;
     wchar_t* cloned_str = wcsclone(Str);
     wchar_t* trimmed_str = trim(cloned_str);
-    TStrToBytesError result = str2int(trimmed_str, &I, base);
-    free(cloned_str);
 
-    *ConvertedBytes = ((TExampleDTCInstance *)ThisPtr)->ConvertedBytes;
-    (*(int32_t*)*ConvertedBytes) = (int32_t)I;
+    TStrToBytesError result = str2int(trimmed_str, &I, base);
+    
+    // hexadecimal numbers are always handled as unsigned integers
+    if (result == stbeOverflow)
+    {
+        unsigned long UI;
+        result = str2uint(trimmed_str, &UI, base);
+        I = (long)UI;
+    }
+    
+    free(cloned_str);
+    
+    *((int32_t*)Converter->ConvertedBytes) = (int32_t)I;
+    *ConvertedBytes = Converter->ConvertedBytes;
     
     *ConvertedByteCount = sizeof(int32_t);
 
@@ -178,9 +190,9 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     return result;
 }
 
-TDataTypeConverterPluginInterface ExampleDTCClass =
+TDataTypeConverterPluginInterface Int32ConverterIntf =
 {
-    .ConverterType = &ExampleDTCClass,
+    .ConverterType = &Int32ConverterIntf,
     
     .CreateConverter = &CreateConverter,
     .DeleteConverter = &DeleteConverter,

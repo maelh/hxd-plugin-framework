@@ -1,17 +1,18 @@
 #include <stdlib.h>
 #include <sstream>
 
-#include "DataInspectorPluginExample.h"
 #include "CStrUtils.h"
 #include "StrUtils.h"
 
+#include "Int32Converter.h"
 
-TExternalDataTypeConverter* TExampleDTC::Create()
+
+TExternalDataTypeConverter* TInt32Converter::Create()
 {
-    return new TExampleDTC();
+    return new TInt32Converter();
 }
 
-TExampleDTC::TExampleDTC()
+TInt32Converter::TInt32Converter()
 {
     FName = L"C++ - Int32";
     FWidth = dtwFixed;
@@ -19,7 +20,7 @@ TExampleDTC::TExampleDTC()
     FSupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
 }
 
-void TExampleDTC::ChangeByteOrder(uint8_t* Bytes, int ByteCount,
+void TInt32Converter::ChangeByteOrder(uint8_t* Bytes, int ByteCount,
     TByteOrder TargetByteOrder)
 {
     static_assert(sizeof(unsigned long) == sizeof(int32_t),
@@ -29,7 +30,7 @@ void TExampleDTC::ChangeByteOrder(uint8_t* Bytes, int ByteCount,
        *(int32_t*)Bytes = _byteswap_ulong(*(int32_t*)Bytes);
 }
 
-TBytesToStrError TExampleDTC::BytesToStr(uint8_t* Bytes, int ByteCount,
+TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
     TIntegerDisplayOption IntegerDisplayOption, int& ConvertedBytesCount,
     std::wstring& ConvertedStr)
 {
@@ -69,7 +70,7 @@ TBytesToStrError TExampleDTC::BytesToStr(uint8_t* Bytes, int ByteCount,
     }
 }
 
-TStrToBytesError TExampleDTC::StrToBytes(std::wstring Str,
+TStrToBytesError TInt32Converter::StrToBytes(std::wstring Str,
     TIntegerDisplayOption IntegerDisplayOption,
     std::vector<uint8_t>& ConvertedBytes)
 {
@@ -91,6 +92,14 @@ TStrToBytesError TExampleDTC::StrToBytes(std::wstring Str,
     long I;
     trim(Str);
     TStrToBytesError result = str2int(Str.c_str(), &I, base);
+
+    // hexadecimal numbers are always handled as unsigned integers
+    if (result == stbeOverflow)
+    {
+        unsigned long UI;
+        result = str2uint(Str.c_str(), &UI, base);
+        I = (long)UI;
+    }
 
     ConvertedBytes.resize(sizeof(int32_t));
     *((int32_t*)&ConvertedBytes[0]) = (int32_t)I;

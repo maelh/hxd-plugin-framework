@@ -1,4 +1,4 @@
-unit PluginMain;
+unit Int32Converter;
 
 interface
 
@@ -6,7 +6,7 @@ uses
   SysUtils, DataInspectorShared, DataInspectorPluginServer;
 
 type
-  TExampleDTC = class(TExternalDataTypeConverter)
+  TInt32Converter = class(TExternalDataTypeConverter)
   public
     constructor Create; override;
 
@@ -23,13 +23,13 @@ type
 
 implementation
 
-{ TExampleExternalDTC }
+{ TInt32Converter }
 
 type
   PInt32 = ^Int32;
   PUInt32 = ^UInt32;
 
-constructor TExampleDTC.Create;
+constructor TInt32Converter.Create;
 begin
   inherited;
   FName := 'Delphi - Int32';
@@ -47,7 +47,7 @@ begin
     ((UI32 and $FF000000) shr 24);
 end;
 
-procedure TExampleDTC.ChangeByteOrder(Bytes: PByte; ByteCount: Integer;
+procedure TInt32Converter.ChangeByteOrder(Bytes: PByte; ByteCount: Integer;
   TargetByteOrder: TByteOrder);
 begin
   inherited;
@@ -56,7 +56,7 @@ begin
     PUInt32(Bytes)^ := ByteSwap(PUInt32(Bytes)^);
 end;
 
-function TExampleDTC.BytesToStr(Bytes: PByte; ByteCount: Integer;
+function TInt32Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;
   IntegerDisplayOption: TIntegerDisplayOption; out ConvertedBytesCount: Integer;
   var ConvertedStr: string): TBytesToStrError;
 begin
@@ -82,7 +82,7 @@ begin
   end;
 end;
 
-function TExampleDTC.StrToBytes(Str: string;
+function TInt32Converter.StrToBytes(Str: string;
   IntegerDisplayOption: TIntegerDisplayOption;
   var ConvertedBytes: TBytes): TStrToBytesError;
 var
@@ -106,7 +106,7 @@ begin
 end;
 
 initialization
-  RegisterDataTypeConverter(TExampleDTC);
+  RegisterDataTypeConverter(TInt32Converter);
 
 end.
 

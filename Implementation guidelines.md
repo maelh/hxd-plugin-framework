@@ -80,13 +80,31 @@ not matter whether this exponent is in upper ("123E4") or lower case ("123e4").
 Similarly, for hexadecimal integer values: "1A2B3C4D" and "1a2b3c4d" should both
 be treated as valid encodings of the same value.
 
+## Converting from and to hexadecimal numbers
+
+Hexadecimal numbers should always be treated as unsigned, even if you make a
+datatype converter for a signed integer type. Assuming you make an Int32
+converter, a string representing a hexadecimal number such as "80000000" would
+cause a range error, since the largest positive number for Int32 is 2147483647
+(7FFFFFFF in hexadecimal).
+
+You should detect such error cases in StrToBytes(), and then use an unsigned
+conversion function and a type cast, instead.
+
+When converting BytesToStr() negative values should still map to an unsigned
+hexadecimal value.
+
+Refer to the C and C++ examples, which handle this correctly and explicitly. The
+Delphi example handles this correctly as well, but it is done implicitly by
+Delphi's RTL.
+
 ## Which standard C/C++ type conversion function to use?
 
 ### Short version
 
-Use strtol/wcstol (and similar). See str2int() in CStrUtils.c for a correct
-wrapper that takes care of all the necessary subtleties. A str2float() would use
-strtof/wcstof in a similar way, to handle single precision floats.
+Use strtol/wcstol (and similar). See str2int() and str2uint() in CStrUtils.c for
+correct wrappers that take care of all the necessary subtleties. A str2float()
+would use strtof/wcstof in a similar way, to handle single precision floats.
 
 ### Longer version
 
@@ -100,13 +118,16 @@ sscanf / swscanf and istringstream are a bit heavy weight, and also not as easy
 or reliable to detect errors conditions.
 
 Instead use a function of the strtol family (or in our case wcstol,
-for wchar_t*) as exemplified by the wrapper function str2int() in CStrUtils.c.
+for wchar_t*) as exemplified by the wrapper functions str2int() and str2uint()
+in CStrUtils.c.
 
 
 ## Which standard Delphi type conversion function to use?
 
-Delphi's (Try)StrToInt/(Try)StrToFloat already respect the locale and handles
-widestrings fine. There are similar functions for other basic data types,
-eventhough you are likely to have to write your own ones for special data types,
-where the notes above matter (respecting locale, flexible input syntax, etc.).
+Delphi's (Try)StrToInt/(Try)StrToFloat already respect the locale and handle
+widestrings fine. (Try)StrToInt also properly handles hexadecimal values as
+unsigned, even if the input is a signed integer. There are similar functions for
+other basic data types, eventhough you are likely to have to write your own ones
+for special data types, where the notes above matter (respecting locale,
+flexible input syntax, etc.).
 

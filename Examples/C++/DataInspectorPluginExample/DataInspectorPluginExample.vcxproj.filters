@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DataInspectorPluginExample.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\Interface\C\DataInspectorPluginInterface.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,12 +30,12 @@
     <ClInclude Include="..\..\C\DataInspectorPluginExample\CStrUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Int32Converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\C\DataInspectorPluginExample\CStrUtils.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DataInspectorPluginExample.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.cpp">
@@ -48,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="StrUtils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Int32Converter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

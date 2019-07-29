@@ -21,6 +21,8 @@ wchar_t* trim(wchar_t* str);
 // Otherwise, assumes an integer format as specified by wcstol().
 TStrToBytesError str2int(const wchar_t* str, long* res, int base);
 
+TStrToBytesError str2uint(const wchar_t* str, unsigned long* res, int base);
+
 #ifdef __cplusplus  
 }
 #endif 

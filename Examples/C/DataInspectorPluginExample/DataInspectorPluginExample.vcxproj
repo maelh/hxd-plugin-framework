@@ -153,7 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CStrUtils.c" />
-    <ClCompile Include="DataInspectorPluginExample.c" />
+    <ClCompile Include="Int32Converter.c" />
     <ClCompile Include="DataInspectorPluginServer.c" />
     <ClCompile Include="dllmain.c" />
   </ItemGroup>
@@ -161,7 +161,7 @@
     <ClInclude Include="..\..\..\Interface\C\DataInspectorPluginInterface.h" />
     <ClInclude Include="..\..\..\Interface\C\DataInspectorShared.h" />
     <ClInclude Include="CStrUtils.h" />
-    <ClInclude Include="DataInspectorPluginExample.h" />
+    <ClInclude Include="Int32Converter.h" />
     <ClInclude Include="DataInspectorPluginServer.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

@@ -21,10 +21,10 @@
     <ClCompile Include="DataInspectorPluginServer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataInspectorPluginExample.c">
+    <ClCompile Include="CStrUtils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CStrUtils.c">
+    <ClCompile Include="Int32Converter.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -38,13 +38,13 @@
     <ClInclude Include="DataInspectorPluginServer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataInspectorPluginExample.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CStrUtils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Int32Converter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
