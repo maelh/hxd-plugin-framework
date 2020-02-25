@@ -14,7 +14,8 @@ TExternalDataTypeConverter* TInt32Converter::Create()
 
 TInt32Converter::TInt32Converter()
 {
-    FName = L"C++ - Int32";
+    FTypeName = L"C++ - Int32";
+    FFriendlyTypeName = FTypeName;
     FWidth = dtwFixed;
     FMaxTypeSize = sizeof(int32_t);
     FSupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
@@ -31,12 +32,12 @@ void TInt32Converter::ChangeByteOrder(uint8_t* Bytes, int ByteCount,
 }
 
 TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
-    TIntegerDisplayOption IntegerDisplayOption, int& ConvertedBytesCount,
+    TIntegerDisplayOption IntegerDisplayOption, int& ConvertedByteCount,
     std::wstring& ConvertedStr)
 {
     if (ByteCount >= sizeof(int32_t))
     {
-        ConvertedBytesCount = sizeof(int32_t);
+        ConvertedByteCount = sizeof(int32_t);
 
         std::wostringstream ss;
         switch (IntegerDisplayOption)
@@ -63,7 +64,7 @@ TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
     }
     else
     {
-        ConvertedBytesCount = 0;
+        ConvertedByteCount = 0;
         ConvertedStr = L""; // Warning: do not return NULL, this will throw exceptions
 
         return btseBytesTooShort;

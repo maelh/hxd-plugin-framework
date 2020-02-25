@@ -1,3 +1,10 @@
 LIBRARY   DataInspectorPluginExample
 EXPORTS
-	GetDataTypeConverters @1
+	  GetDataTypeConverterClassIDs @1
+
+	  CreateConverter @2
+	  DestroyConverter @3
+	  AssignConverter @4
+	  ChangeByteOrder @5
+	  BytesToStr @6
+	  StrToBytes @7

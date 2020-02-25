@@ -155,10 +155,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Interface\C\DataInspectorPluginInterface.h" />
     <ClInclude Include="..\..\C\DataInspectorPluginExample\CStrUtils.h" />
-    <ClInclude Include="..\..\..\Interface\C\DataInspectorPluginInterface.h">
-      <DeploymentContent>false</DeploymentContent>
-    </ClInclude>
     <ClInclude Include="..\..\..\Interface\C++\DataInspectorPluginServer.h" />
     <ClInclude Include="..\..\..\Interface\C\DataInspectorShared.h" />
     <ClInclude Include="Int32Converter.h" />
