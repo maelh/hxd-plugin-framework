@@ -14,9 +14,9 @@ type
       TargetByteOrder: TByteOrder); override;
     function BytesToStr(Bytes: PByte; ByteCount: Integer;
       IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedBytesCount: Integer;
+      out ConvertedByteCount: Integer;
       var ConvertedStr: string): TBytesToStrError; override;
-    function StrToBytes(Str: string;
+    function StrToBytes(const Str: string;
       IntegerDisplayOption: TIntegerDisplayOption;
       var ConvertedBytes: TBytes): TStrToBytesError; override;
   end;
@@ -32,7 +32,8 @@ type
 constructor TInt32Converter.Create;
 begin
   inherited;
-  FName := 'Delphi - Int32';
+  FTypeName := 'Delphi - Int32';
+  FFriendlyTypeName := FTypeName;
   FWidth := dtwFixed;
   FMaxTypeSize := sizeof(Int32);
   FSupportedByteOrders := [boLittleEndian, boBigEndian];
@@ -57,7 +58,7 @@ begin
 end;
 
 function TInt32Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;
-  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedBytesCount: Integer;
+  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedByteCount: Integer;
   var ConvertedStr: string): TBytesToStrError;
 begin
   if ByteCount >= sizeof(Int32) then
@@ -71,29 +72,32 @@ begin
         ConvertedStr := AnsiLowerCase(IntToHex(PInt32(Bytes)^, 0));
     end;
 
-    ConvertedBytesCount := sizeof(Int32);
+    ConvertedByteCount := sizeof(Int32);
     Result := btseNone;
   end
   else
   begin
     ConvertedStr := '';
-    ConvertedBytesCount := 0;
+    ConvertedByteCount := 0;
     Result := btseBytesTooShort;
   end;
 end;
 
-function TInt32Converter.StrToBytes(Str: string;
+function TInt32Converter.StrToBytes(const Str: string;
   IntegerDisplayOption: TIntegerDisplayOption;
   var ConvertedBytes: TBytes): TStrToBytesError;
 var
   I: Int32;
+  S: string;
 begin
   if IntegerDisplayOption in [idoHexadecimalUpperCase,
     idoHexadecimalLowerCase]
   then
-    Str := '$' + Str;
+    S := '$' + Str
+  else
+    S := Str;
 
-  if TryStrToInt(Str, I) then
+  if TryStrToInt(S, I) then
   begin
     SetLength(ConvertedBytes, sizeof(Int32));
     PInt32(@ConvertedBytes[0])^ := I;
