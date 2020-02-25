@@ -1,15 +1,22 @@
 library DataInspectorPluginExample;
 
 uses
-  Int32Converter in 'Int32Converter.pas',
-  DataInspectorPluginInterface in '..\..\Interface\Delphi\DataInspectorPluginInterface.pas',
+  DataInspectorShared in '..\..\Interface\Delphi\DataInspectorShared.pas',
   DataInspectorPluginServer in '..\..\Interface\Delphi\DataInspectorPluginServer.pas',
-  DataInspectorShared in '..\..\Interface\Delphi\DataInspectorShared.pas';
+  Int32Converter in 'Int32Converter.pas',
+  Float64Converter in 'Float64Converter.pas';
 
 {$R *.res}
 
 exports
-  GetDataTypeConverters;
+  GetDataTypeConverterClassIDs,
+
+  CreateConverter,
+  DestroyConverter,
+  AssignConverter,
+  ChangeByteOrder,
+  BytesToStr,
+  StrToBytes;
 
 begin
 end.
