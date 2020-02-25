@@ -52,7 +52,8 @@ typedef struct TInt32ConverterInstance {
     uint8_t ConvertedBytes[sizeof(int32_t)];
 } TInt32ConverterInstance;
 
-void* __stdcall CreateConverter(TConverterType ConvType, const wchar_t** Name,
+void* __stdcall CreateConverter(TConverterClassID ClassIdOrFactoryFunc,
+    const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
     TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders)
 {
     // ConvType can be used to pass in class information to customize creation,
@@ -61,7 +62,8 @@ void* __stdcall CreateConverter(TConverterType ConvType, const wchar_t** Name,
     // class constructors or factory functions in a generic manner.
     assert(ConvType == &Int32ConverterIntf);
 
-    *Name = L"C - Int32";
+    *TypeName = L"C - Int32";
+    *FriendlyTypeName = *TypeName;
     *Width = dtwFixed;
     *MaxTypeSize = sizeof(int32_t);
     *SupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
@@ -71,9 +73,9 @@ void* __stdcall CreateConverter(TConverterType ConvType, const wchar_t** Name,
     return Converter;
 }
 
-void __stdcall DeleteConverter(void* Converter)
+void __stdcall DestroyConverter(void* ThisPtr)
 {
-    free(Converter);
+    free(ThisPtr);
 }
 
 void __stdcall AssignConverter(void* ThisPtr, void* Source)
