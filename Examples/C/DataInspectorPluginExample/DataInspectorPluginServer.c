@@ -4,25 +4,30 @@
 // as provided by many languages by default. Implementing a dynamic array in C
 // would just add clutter, and distract from giving a simple example; so we
 // chose an arbitrary limit of 10.
-#define MaxConvTypes 10
+#define MaxConverterCount 10
 
-TConverterType ConvTypes[MaxConvTypes];
-int ConvTypeCount = 0;
+TConverterClassID InternalClassIDsOrFactoryFuncs[MaxConverterCount];
+int ConverterCount = 0;
 
-BOOL __stdcall GetDataTypeConverters(
-    PDataTypeConverterPluginInterface* ConvInterfaces, int* ConvInterfaceCount)
+
+void RegisterDataTypeConverter(
+    TExternalDataTypeConverterFactoryFunction ConverterFactoryFunc)
 {
-    *ConvInterfaceCount = ConvTypeCount;
-    *ConvInterfaces = ConvTypes[0];
-
-    return TRUE;
+    if (ConverterCount < MaxConverterCount)
+    {
+        InternalClassIDsOrFactoryFuncs[ConverterCount] = ConverterFactoryFunc;
+        ConverterCount++;
+    }
 }
 
-void RegisterDataTypeConverter(TConverterType ConvType)                         
+BOOL __stdcall GetDataTypeConverterClassIDs(
+    PConverterClassID* ClassIDsOrFactoryFuncs, int* Count)
 {
-    if (ConvTypeCount < MaxConvTypes)
-    {
-        ConvTypes[ConvTypeCount] = ConvType;
-        ConvTypeCount++;
-    }
+    if (ConverterCount > 0)
+        *ClassIDsOrFactoryFuncs = &InternalClassIDsOrFactoryFuncs[0];
+    else
+        *ClassIDsOrFactoryFuncs = NULL;
+    *Count = ConverterCount;
+
+    return TRUE;
 }

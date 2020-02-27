@@ -37,6 +37,9 @@ typedef enum TStrToBytesError {
 	stbeOutOfRange // if unclear whether underflow or overflow
 } TStrToBytesError;
 
+typedef void* TConverterClassID;
+typedef TConverterClassID* PConverterClassID;
+
 #ifdef __cplusplus  
 }
 #endif

@@ -3,7 +3,8 @@
 #include "DataInspectorShared.h"
 #include "DataInspectorPluginInterface.h"
 
-BOOL __stdcall GetDataTypeConverters(
-	PDataTypeConverterPluginInterface* ConvInterfaces, int* ConvInterfaceCount);
+// Class factory function / virtual constructor
+typedef void* (*TExternalDataTypeConverterFactoryFunction)();
 
-void RegisterDataTypeConverter(TConverterType ConvType);
+void RegisterDataTypeConverter(
+    TExternalDataTypeConverterFactoryFunction ConverterFactoryFunc);
