@@ -6,7 +6,8 @@ TExternalDataTypeConverter::TExternalDataTypeConverter()
 
 void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
 {
-    FName = Source->FName;
+    FTypeName = Source->FTypeName;
+    FFriendlyTypeName = Source->FFriendlyTypeName;
     FWidth = Source->FWidth;
     FMaxTypeSize = Source->FMaxTypeSize;
     FSupportedByteOrders = Source->FSupportedByteOrders;
@@ -15,41 +16,17 @@ void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
     FLastReturnedByteArray = Source->FLastReturnedByteArray;
 }
 
-
-class TRawToClassAdapter
+void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
+    const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
+    TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders)
 {
-public:
-    static void* __stdcall CreateConverter(TConverterType ConvType,
-        const wchar_t** Name, TDataTypeWidth* Width, int* MaxTypeSize,
-        TByteOrders* SupportedByteOrders);
+    TExternalDataTypeConverterFactoryFunction FactoryFunc =
+        (TExternalDataTypeConverterFactoryFunction)ClassIDOrFactoryFunc;
 
-    static void __stdcall DeleteConverter(void* Converter);
+    TExternalDataTypeConverter* Converter = FactoryFunc();
 
-    static void __stdcall AssignConverter(void* ThisPtr, void* Source);
-
-    static void __stdcall ChangeByteOrder(void* ThisPtr, uint8_t* Bytes,
-        int ByteCount, TByteOrder TargetByteOrder);
-
-    static TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
-        int ByteCount, TIntegerDisplayOption IntegerDisplayOption,
-        int* ConvertedBytesCount, const wchar_t** ConvertedStr);
-
-    static TStrToBytesError __stdcall StrToBytes(void* ThisPtr,
-        const wchar_t* Str,	TIntegerDisplayOption IntegerDisplayOption,
-        uint8_t** ConvertedBytes, int* ConvertedByteCount);
-};
-
-
-void* TRawToClassAdapter::CreateConverter(TConverterType ConvType,
-    const wchar_t** Name, TDataTypeWidth* Width, int* MaxTypeSize,
-    TByteOrders* SupportedByteOrders)
-{
-    TExternalDataTypeConverterFactoryFunction FactoryFunction =
-        (TExternalDataTypeConverterFactoryFunction)ConvType;
-
-    TExternalDataTypeConverter* Converter = FactoryFunction();
-
-    *Name = Converter->GetName().c_str();
+    *TypeName = Converter->GetTypeName().c_str();
+    *FriendlyTypeName = Converter->GetFriendlyTypeName().c_str();
     *Width = Converter->GetWidth();
     *MaxTypeSize = Converter->GetMaxTypeSize();
     *SupportedByteOrders = Converter->GetSupportedByteOrders();
@@ -57,49 +34,49 @@ void* TRawToClassAdapter::CreateConverter(TConverterType ConvType,
     return Converter;
 }
 
-void TRawToClassAdapter::DeleteConverter(void* Converter)
+void __stdcall DestroyConverter(void* ThisPtr)
 {
-    delete ((TExternalDataTypeConverter*)Converter);
+    delete ((TExternalDataTypeConverter*)ThisPtr);
 }
 
-void TRawToClassAdapter::AssignConverter(void* ThisPtr, void* Source)
+void __stdcall AssignConverter(void* ThisPtr, void* Source)
 {
     ((TExternalDataTypeConverter*)ThisPtr)->Assign(
         (TExternalDataTypeConverter*)Source);
 }
 
-void TRawToClassAdapter::ChangeByteOrder(void* ThisPtr, uint8_t* Bytes,
-    int ByteCount, TByteOrder TargetByteOrder)
+void __stdcall ChangeByteOrder(void* ThisPtr, uint8_t* Bytes, int ByteCount,
+    TByteOrder TargetByteOrder)
 {
     ((TExternalDataTypeConverter*)ThisPtr)->ChangeByteOrder(Bytes, ByteCount,
         TargetByteOrder);
 }
 
-TBytesToStrError TRawToClassAdapter::BytesToStr(void* ThisPtr, uint8_t* Bytes,
+TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
     int ByteCount, TIntegerDisplayOption IntegerDisplayOption,
-    int* ConvertedBytesCount, const wchar_t** ConvertedStr)
+    int* ConvertedByteCount, const wchar_t** ConvertedStr)
 {
     TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
-    
+
     Converter->FLastReturnedString.clear();
 
     TBytesToStrError result = Converter->BytesToStr(Bytes, ByteCount,
-        IntegerDisplayOption, *ConvertedBytesCount,
+        IntegerDisplayOption, *ConvertedByteCount,
         Converter->FLastReturnedString);
-    
+
     *ConvertedStr = Converter->FLastReturnedString.c_str();
 
     return result;
 }
 
-TStrToBytesError TRawToClassAdapter::StrToBytes(void* ThisPtr,
-    const wchar_t* Str,	TIntegerDisplayOption IntegerDisplayOption,
-    uint8_t** ConvertedBytes, int* ConvertedByteCount)
+TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
+    TIntegerDisplayOption IntegerDisplayOption, uint8_t** ConvertedBytes,
+    int* ConvertedByteCount)
 {
     TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
 
     Converter->FLastReturnedByteArray.clear();
-    
+
     TStrToBytesError result = Converter->StrToBytes(Str, IntegerDisplayOption,
         Converter->FLastReturnedByteArray);
 
@@ -112,32 +89,22 @@ TStrToBytesError TRawToClassAdapter::StrToBytes(void* ThisPtr,
     return result;
 }
 
-std::vector<TDataTypeConverterPluginInterface> ConverterInterfaces;
-
-BOOL __stdcall GetDataTypeConverters(
-    PDataTypeConverterPluginInterface* ConvInterfaces, int* ConvInterfaceCount)
-{
-    if (ConverterInterfaces.size() > 0)
-        *ConvInterfaces = &ConverterInterfaces[0];
-    else
-        *ConvInterfaces = NULL;
-    *ConvInterfaceCount = (int)ConverterInterfaces.size();
-
-    return TRUE;
-}
+std::vector<TConverterClassID> InternalClassIDsOrFactoryFuncs;
 
 void RegisterDataTypeConverter(
-    TExternalDataTypeConverterFactoryFunction FactoryFunction)
+    TExternalDataTypeConverterFactoryFunction ConverterFactoryFunc)
 {
-    TDataTypeConverterPluginInterface ConvIntf = {
-        FactoryFunction,
-        TRawToClassAdapter::CreateConverter,
-        TRawToClassAdapter::DeleteConverter,
-        TRawToClassAdapter::AssignConverter,
-        TRawToClassAdapter::ChangeByteOrder,
-        TRawToClassAdapter::BytesToStr,
-        TRawToClassAdapter::StrToBytes
-    };
+    InternalClassIDsOrFactoryFuncs.push_back(ConverterFactoryFunc);
+}
 
-    ConverterInterfaces.push_back(ConvIntf);
+BOOL __stdcall GetDataTypeConverterClassIDs(
+    PConverterClassID* ClassIDsOrFactoryFuncs, int* Count)
+{
+    if (InternalClassIDsOrFactoryFuncs.size() > 0)
+        *ClassIDsOrFactoryFuncs = &InternalClassIDsOrFactoryFuncs[0];
+    else
+        *ClassIDsOrFactoryFuncs = NULL;
+    *Count = (int)InternalClassIDsOrFactoryFuncs.size();
+
+    return TRUE;
 }
