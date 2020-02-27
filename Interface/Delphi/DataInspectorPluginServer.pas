@@ -57,6 +57,9 @@ begin
   FWidth := Source.FWidth;
   FMaxTypeSize := Source.FMaxTypeSize;
   FSupportedByteOrders := Source.FSupportedByteOrders;
+
+  FLastReturnedString := Source.FLastReturnedString;
+  FLastReturnedByteArray := Source.FLastReturnedByteArray;
 end;
 
 constructor TExternalDataTypeConverter.Create;

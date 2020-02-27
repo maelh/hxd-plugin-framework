@@ -1,4 +1,16 @@
 {$IFDEF HXD_FUNC_PTRS}
+  TGetDataTypeConverterClassIDs = function
+{$ELSE}
+function GetDataTypeConverterClassIDs
+{$ENDIF}
+  (out ClassIDsOrFactoryFuncs: PConverterClassID;
+  out Count: Integer): LongBool; stdcall;
+{$IFNDEF HXD_FUNC_PTRS}
+  forward;
+{$ENDIF}
+
+
+{$IFDEF HXD_FUNC_PTRS}
   TCreateConverter = function
 {$ELSE}
 function CreateConverter
@@ -76,16 +88,3 @@ function StrToBytes
 {$IFNDEF HXD_FUNC_PTRS}
   forward;
 {$ENDIF}
-
-
-{$IFDEF HXD_FUNC_PTRS}
-  TGetDataTypeConverterClassIDs = function
-{$ELSE}
-function GetDataTypeConverterClassIDs
-{$ENDIF}
-  (out ClassIDsOrFactoryFuncs: PConverterClassID;
-  out Count: Integer): LongBool; stdcall;
-{$IFNDEF HXD_FUNC_PTRS}
-  forward;
-{$ENDIF}
-
