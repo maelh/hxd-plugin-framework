@@ -17,6 +17,9 @@ type
     stbeOutOfRange // if unclear whether underflow or overflow
   );
 
+  PConverterClassID = ^TConverterClassID;
+  TConverterClassID = type Pointer;
+
 implementation
 
 end.

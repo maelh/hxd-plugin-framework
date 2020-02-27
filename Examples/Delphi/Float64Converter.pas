@@ -40,18 +40,16 @@ begin
   FSupportedByteOrders := [boLittleEndian, boBigEndian];
 end;
 
-// TODO: not correct implementation
-function ByteSwap(UI64: UInt64): UInt64; inline;
+function ByteSwap(Value: UInt64): UInt64;
 begin
-  Result :=
-    ((UI64 and $000000FF) shl 24) or
-    ((UI64 and $0000FF00) shl 8) or
-    ((UI64 and $00FF0000) shr 8) or
-    ((UI64 and $FF000000) shr 24) or
-    ((UI64 and $000000FF) shl 24) or
-    ((UI64 and $0000FF00) shl 8) or
-    ((UI64 and $00FF0000) shr 8) or
-    ((UI64 and $FF000000) shr 24);
+  PByte(@Result)[0] := PByte(@Value)[7];
+  PByte(@Result)[1] := PByte(@Value)[6];
+  PByte(@Result)[2] := PByte(@Value)[5];
+  PByte(@Result)[3] := PByte(@Value)[4];
+  PByte(@Result)[4] := PByte(@Value)[3];
+  PByte(@Result)[5] := PByte(@Value)[2];
+  PByte(@Result)[6] := PByte(@Value)[1];
+  PByte(@Result)[7] := PByte(@Value)[0];
 end;
 
 procedure TFloat64Converter.ChangeByteOrder(Bytes: PByte; ByteCount: Integer;

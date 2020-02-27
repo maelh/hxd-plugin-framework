@@ -3,16 +3,20 @@ unit DataInspectorPluginServer;
 interface
 
 uses
-  SysUtils, DataInspectorShared, DataInspectorPluginInterface;
+  SysUtils, DataInspectorShared;
 
 type
   TExternalDataTypeConverterClass = class of TExternalDataTypeConverter;
   TExternalDataTypeConverter = class
-  protected
-    FName: string;
+  strict protected
+    FTypeName: string;
+    FFriendlyTypeName: string;
     FWidth: TDataTypeWidth;
     FMaxTypeSize: Integer;
     FSupportedByteOrders: TByteOrders;
+  private
+    FLastReturnedString: string;
+    FLastReturnedByteArray: TBytes;
   public
     constructor Create; virtual;
 
@@ -22,22 +26,24 @@ type
       TargetByteOrder: TByteOrder); virtual; abstract;
     function BytesToStr(Bytes: PByte; ByteCount: Integer;
       IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedBytesCount: Integer;
+      out ConvertedByteCount: Integer;
       var ConvertedStr: string): TBytesToStrError; virtual; abstract;
-    function StrToBytes(Str: string;
+    function StrToBytes(const Str: string;
       IntegerDisplayOption: TIntegerDisplayOption;
       var ConvertedBytes: TBytes): TStrToBytesError; virtual; abstract;
+
+    property TypeName: string read FTypeName;
+    property FriendlyTypeName: string read FFriendlyTypeName;
+    property Width: TDataTypeWidth read FWidth;
+    property MaxTypeSize: Integer read FMaxTypeSize;
+    property SupportedByteOrders: TByteOrders read FSupportedByteOrders;
   end;
 
-//function GetPluginInfo(out PluginTitle: PWideChar; out Authors: PWideChar;
-//  out License: PWideChar): LongBool; stdcall;
-
-function GetDataTypeConverters(
-  out ConvInterfaces: PDataTypeConverterPluginInterface;
-  out ConvInterfaceCount: Integer): LongBool; stdcall;
 
 procedure RegisterDataTypeConverter(
   ConverterClass: TExternalDataTypeConverterClass);
+
+{$I DataInspectorPluginInterface.inc}
 
 implementation
 
@@ -46,7 +52,8 @@ implementation
 procedure TExternalDataTypeConverter.Assign(Source: TExternalDataTypeConverter);
 begin
   inherited;
-  FName := Source.FName;
+  FTypeName := Source.FTypeName;
+  FFriendlyTypeName := Source.FFriendlyTypeName;
   FWidth := Source.FWidth;
   FMaxTypeSize := Source.FMaxTypeSize;
   FSupportedByteOrders := Source.FSupportedByteOrders;
@@ -58,129 +65,96 @@ begin
 end;
 
 
-{ TRawToClassAdapter }
+{ raw functions that delegate to methods }
 
-type
-  TRawToClassAdapter = class sealed
-  public
-    class function CreateConverter(ConvType: TConverterType;
-      out Name: PWideChar; out Width: TDataTypeWidth; out MaxTypeSize: Integer;
-      out SupportedByteOrders: TByteOrders): Pointer; static; stdcall;
-
-    class procedure DeleteConverter(Converter: Pointer); static; stdcall;
-
-    class procedure AssignConverter(ThisPtr: Pointer;
-      Source: Pointer); static; stdcall;
-
-    class procedure ChangeByteOrder(ThisPtr: Pointer; Bytes: PByte;
-      ByteCount: Integer; TargetByteOrder: TByteOrder); static; stdcall;
-
-    class function BytesToStr(ThisPtr: Pointer; Bytes: PByte;
-      ByteCount: Integer; IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedBytesCount: Integer;
-      out ConvertedStr: PWideChar): TBytesToStrError; static; stdcall;
-
-    class function StrToBytes(ThisPtr: Pointer; const Str: PWideChar;
-      IntegerDisplayOption: TIntegerDisplayOption; out ConvertedBytes: PByte;
-      out ConvertedByteCount: Integer): TStrToBytesError; static; stdcall;
-  end;
-
-class function TRawToClassAdapter.CreateConverter(ConvType: TConverterType;
-  out Name: PWideChar; out Width: TDataTypeWidth; out MaxTypeSize: Integer;
-  out SupportedByteOrders: TByteOrders): Pointer;
-var
-  Converter: TExternalDataTypeConverter;
-begin
-  Converter := TExternalDataTypeConverterClass(ConvType).Create;
-
-  Name := PWideChar(Converter.FName);
-  Width := Converter.FWidth;
-  MaxTypeSize := Converter.FMaxTypeSize;
-  SupportedByteOrders := Converter.FSupportedByteOrders;
-
-  Result := Converter;
-end;
-
-class procedure TRawToClassAdapter.DeleteConverter(Converter: Pointer);
-begin
-  TExternalDataTypeConverter(Converter).Free;
-end;
-
-class procedure TRawToClassAdapter.AssignConverter(ThisPtr: Pointer;
-  Source: Pointer);
+procedure AssignConverter(ThisPtr, Source: Pointer);
 begin
   TExternalDataTypeConverter(ThisPtr).Assign(Source);
 end;
 
-class procedure TRawToClassAdapter.ChangeByteOrder(ThisPtr: Pointer;
-  Bytes: PByte; ByteCount: Integer; TargetByteOrder: TByteOrder);
+function BytesToStr(ThisPtr: Pointer; Bytes: PByte; ByteCount: Integer;
+  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedByteCount: Integer;
+  out ConvertedStr: PWideChar): TBytesToStrError;
+begin
+  TExternalDataTypeConverter(ThisPtr).FLastReturnedString := '';
+
+  Result := TExternalDataTypeConverter(ThisPtr).BytesToStr(Bytes, ByteCount,
+    IntegerDisplayOption, ConvertedByteCount,
+    TExternalDataTypeConverter(ThisPtr).FLastReturnedString);
+
+  ConvertedStr := PWideChar(TExternalDataTypeConverter(ThisPtr).FLastReturnedString);
+end;
+
+procedure ChangeByteOrder(ThisPtr: Pointer; Bytes: PByte; ByteCount: Integer;
+  TargetByteOrder: TByteOrder);
 begin
   TExternalDataTypeConverter(ThisPtr).ChangeByteOrder(Bytes, ByteCount,
     TargetByteOrder);
 end;
 
-class function TRawToClassAdapter.BytesToStr(ThisPtr: Pointer; Bytes: PByte;
-  ByteCount: Integer; IntegerDisplayOption: TIntegerDisplayOption;
-  out ConvertedBytesCount: Integer; out ConvertedStr: PWideChar): TBytesToStrError;
+function CreateConverter(ClassIDOrFactoryFunc: TConverterClassID; out TypeName,
+  FriendlyTypeName: PWideChar; out Width: TDataTypeWidth;
+  out MaxTypeSize: Integer; out SupportedByteOrders: TByteOrders): Pointer;
 var
-  ConvertedString: string;
+  Converter: TExternalDataTypeConverter;
 begin
-  ConvertedString := '';
-  Result := TExternalDataTypeConverter(ThisPtr).BytesToStr(Bytes, ByteCount,
-    IntegerDisplayOption, ConvertedBytesCount, ConvertedString);
+  Converter := TExternalDataTypeConverterClass(ClassIDOrFactoryFunc).Create;
 
-  ConvertedStr := PWideChar(ConvertedString);
+  TypeName := PWideChar(Converter.TypeName);
+  FriendlyTypeName := PWideChar(Converter.FriendlyTypeName);
+  Width := Converter.Width;
+  MaxTypeSize := Converter.MaxTypeSize;
+  SupportedByteOrders := Converter.SupportedByteOrders;
+
+  Result := Converter;
 end;
 
-class function TRawToClassAdapter.StrToBytes(ThisPtr: Pointer;
-  const Str: PWideChar; IntegerDisplayOption: TIntegerDisplayOption;
-  out ConvertedBytes: PByte; out ConvertedByteCount: Integer): TStrToBytesError;
-var
-  Bytes: TBytes;
+procedure DestroyConverter(ThisPtr: Pointer);
 begin
-  Bytes := nil;
+  TExternalDataTypeConverter(ThisPtr).Free;
+end;
+
+function StrToBytes(ThisPtr: Pointer; const Str: PWideChar;
+  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedBytes: PByte;
+  out ConvertedByteCount: Integer): TStrToBytesError;
+begin
+  TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray := nil;
+
   Result := TExternalDataTypeConverter(ThisPtr).StrToBytes(Str,
-    IntegerDisplayOption, Bytes);
+    IntegerDisplayOption,
+    TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
 
-  ConvertedBytes := PByte(Bytes);
-  ConvertedByteCount := Length(Bytes);
+  ConvertedBytes := PByte(TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
+  ConvertedByteCount := Length(TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
 end;
 
 
-{ functions / procedures }
+{ register and lister functions }
 
 var
-  ConverterInterfaces: TArray<TDataTypeConverterPluginInterface>;
+  InternalClassIDsOrFactoryFuncs: TArray<TConverterClassID>;
 
-function GetDataTypeConverters(
-  out ConvInterfaces: PDataTypeConverterPluginInterface;
-  out ConvInterfaceCount: Integer): LongBool;
+procedure RegisterDataTypeConverter(ConverterClass: TExternalDataTypeConverterClass);
 begin
-  ConvInterfaces := PDataTypeConverterPluginInterface(ConverterInterfaces);
-  ConvInterfaceCount := Length(ConverterInterfaces);
+  SetLength(InternalClassIDsOrFactoryFuncs,
+    Length(InternalClassIDsOrFactoryFuncs) + 1);
+  InternalClassIDsOrFactoryFuncs[High(InternalClassIDsOrFactoryFuncs)] :=
+    ConverterClass;
+end;
+
+function GetDataTypeConverterClassIDs(
+  out ClassIDsOrFactoryFuncs: PConverterClassID; out Count: Integer): LongBool;
+begin
+  Count := Length(InternalClassIDsOrFactoryFuncs);
+  ClassIDsOrFactoryFuncs := PConverterClassID(InternalClassIDsOrFactoryFuncs);
 
   Result := True;
 end;
 
-procedure RegisterDataTypeConverter(
-  ConverterClass: TExternalDataTypeConverterClass);
-var
-  ConverterInterface: TDataTypeConverterPluginInterface;
-begin
-  ConverterInterface := TDataTypeConverterPluginInterface.Create(
-    ConverterClass,
-    TRawToClassAdapter.CreateConverter, TRawToClassAdapter.DeleteConverter,
-    TRawToClassAdapter.AssignConverter, TRawToClassAdapter.ChangeByteOrder,
-    TRawToClassAdapter.BytesToStr, TRawToClassAdapter.StrToBytes);
-
-  SetLength(ConverterInterfaces, Length(ConverterInterfaces) + 1);
-  ConverterInterfaces[High(ConverterInterfaces)] := ConverterInterface;
-end;
-
 initialization
-  ConverterInterfaces := nil;
+  InternalClassIDsOrFactoryFuncs := nil;
 
 finalization
-  ConverterInterfaces := nil;
+  InternalClassIDsOrFactoryFuncs := nil;
 
 end.
