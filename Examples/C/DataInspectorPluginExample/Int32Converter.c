@@ -8,59 +8,53 @@
 
 #include "Int32Converter.h"
 
-// This is the most basic implementation in C, which defines a new set of
-// functions (refer to TDataTypeConverterPluginInterface) for each data type
-// converter, and does not try to leverage polymorphy (which can be done in C
-// as well, even if less comfortably) to minimize code.
+// This is the most basic implementation in C, which defines all the functions
+// declared in DataInspectorPluginInterface.h in a minimally possible way.
 //
-// The main purpose of the C example is to ease translation of the plugin
-// interface to other languages, with the tradeoff of increasing the effort for
-// each individual plugin. For simple plugins, the additional effort should
-// remain minimal.
+// If more than one datatype converter is to be provided by a plugin/DLL, you
+// have to use the parameters ClassIDOrFactoryFunc or ThisPtr to differentiate
+// between them. The C++ plugin does this automatically, by delegating to the
+// appropriate class/method, but the ideal approach will vary by language. As
+// the main point of the C plugin example is to keep things as simple and
+// neutral as possible, it only implements one datatype converter.
 //
-// NOTE: Even for non OO-plugins the contract for CreateConverter expects that
-// the plugin manages some state for each data converter, individually, and does
-// not use the same global state for all of them. In other words,
-// CreateConverter needs to return a pointer (or some other unique id) that can
-// be used to access that state in calls to the other functions defined in
-// TDataTypeConverterPluginInterface. The pointer returned by CreateConverter
-// will be passed as ThisPtr parameter (also named Converter or Source) in the
-// other functions.
-// 
-// Currently, the two cases requiring individual state are for returned strings
-// and returned bytes, whose references should remain valid until the next
-// function call:
-// - BytesToStr returns a pointer to a string, that should remain valid, until
-// the next call to BytesToStr for the same converter, or until DeleteConverter
-// is called.
-// - StrToBytes returns a pointer to an array of bytes, that should remain
-// valid, until the next call to StrToBytes for the same converter, or until
-// DeleteConverter is called.
+// HxD will create several instances of a datatype converter, as needed.
+// StrToBytes() will return an array of bytes, and BytesToStr() will return a
+// string. The returned values have to stay valid (remain in memory) until the
+// next call to StrToBytes() or BytesToStr(), respectively.
+// That means, you need to store this temporary data until the next call of said
+// functions, and can modify the data only once you enter the function again.
+// You should store this data for each instance separately, as done in this
+// example plugin.
+//
+// The instances returned by CreateConverter() will be passed by HxD to the
+// other functions as ThisPtr (or Source). Use ThisPtr (or Source) to access
+// instance specific data.
+// In this example, these parameters will be of type TInt32ConverterInstance*.
 
 
 typedef struct TInt32ConverterInstance {
-    // NOTE: the array sizes were chosen statically for the int32_t type, but
-    // you may need to dynamically allocate memory for other types to not waste
-    // memory; in this case, make sure to allocate and initialize in
-    // CreateConverter, and deallocate in DeleteConverter (which usually means
-    // the memory management will be slightly more complex than in this
-    // example).
+    // NOTE: for simpliciy the array sizes were chosen statically for the
+    // int32_t type, but you may need to dynamically allocate memory for other
+    // converter types to not waste memory; in this case, make sure to allocate
+    // and initialize in CreateConverter, and deallocate in DestroyConverter.
     // What matters is that each converter instance has its own memory, that
     // holds converted data returned by BytesToStr and StrToBytes (see the
     // comment at file start).
-    wchar_t ConvertedStr[128]; // smaller should be fine, but depends on formatting
+    wchar_t ConvertedStr[128]; // smaller should be fine, but depends on maximal length of formatted string
     uint8_t ConvertedBytes[sizeof(int32_t)];
 } TInt32ConverterInstance;
 
-void* __stdcall CreateConverter(TConverterClassID ClassIdOrFactoryFunc,
+void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
     TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders)
 {
-    // ConvType can be used to pass in class information to customize creation,
-    // and to ease the implementation of constructor delegates.
-    // See the Delphi and C++ examples to see how this is used to call the right
-    // class constructors or factory functions in a generic manner.
-    assert(ConvType == &Int32ConverterIntf);
+    // ClassIDOrFactoryFunc can be used to delegate creation to constructor
+    // functions as needed. See the C++ plugin for an example.
+
+    // Here we just support one converter type, so it suffices to check we were
+    // called to construct the right converter.
+    assert(ClassIDOrFactoryFunc == &Int32ConverterClassID);
 
     *TypeName = L"C - Int32";
     *FriendlyTypeName = *TypeName;
@@ -68,6 +62,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIdOrFactoryFunc,
     *MaxTypeSize = sizeof(int32_t);
     *SupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
 
+    // create instance specific storage
     TInt32ConverterInstance* Converter = malloc(sizeof(TInt32ConverterInstance));
     memset(Converter, 0, sizeof(TInt32ConverterInstance));
     return Converter;
@@ -75,6 +70,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIdOrFactoryFunc,
 
 void __stdcall DestroyConverter(void* ThisPtr)
 {
+    // free instance specific storage
     free(ThisPtr);
 }
 
@@ -192,15 +188,16 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     return result;
 }
 
-TDataTypeConverterPluginInterface Int32ConverterIntf =
-{
-    .ConverterType = &Int32ConverterIntf,
-    
-    .CreateConverter = &CreateConverter,
-    .DeleteConverter = &DeleteConverter,
-    .AssignConverter = &AssignConverter,
 
-    .ChangeByteOrder = &ChangeByteOrder,
-    .BytesToStr = &BytesToStr,
-    .StrToBytes = &StrToBytes
-};
+// Actual value does not matter (so assign 0), we only need the address to this
+// constant storage, see RegisterDataTypeConverter() call in dllmain.c.
+//
+// The address will serve as class ID; it will be unique, since plugins / DLLs
+// and the main program, HxD, are in the same process / address space.
+//
+// Other languages than C can dynamically allocate a variable when the DLL gets
+// loaded, or actually reference an object or a function that is specific to
+// that type converter. What matters is that the pointer is used to uniquely
+// identify the converter type, such that it can be used in CreateConverter()
+// for the parameter ClassIDOrFactoryFunc.
+volatile const int Int32ConverterClassID = 0;

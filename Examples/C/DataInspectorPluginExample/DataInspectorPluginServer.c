@@ -10,12 +10,11 @@ TConverterClassID InternalClassIDsOrFactoryFuncs[MaxConverterCount];
 int ConverterCount = 0;
 
 
-void RegisterDataTypeConverter(
-    TExternalDataTypeConverterFactoryFunction ConverterFactoryFunc)
+void RegisterDataTypeConverter(TClassIDOrFactoryFunc ClassIDOrFactoryFunc)
 {
     if (ConverterCount < MaxConverterCount)
     {
-        InternalClassIDsOrFactoryFuncs[ConverterCount] = ConverterFactoryFunc;
+        InternalClassIDsOrFactoryFuncs[ConverterCount] = ClassIDOrFactoryFunc;
         ConverterCount++;
     }
 }

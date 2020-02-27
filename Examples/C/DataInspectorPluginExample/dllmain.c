@@ -8,7 +8,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call,
     switch (ul_reason_for_call)
     {
     case DLL_PROCESS_ATTACH:
-        RegisterDataTypeConverter(&Int32ConverterIntf);
+        RegisterDataTypeConverter(&Int32ConverterClassID);
         break;
 
     case DLL_THREAD_ATTACH:

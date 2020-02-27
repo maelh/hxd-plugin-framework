@@ -2,4 +2,4 @@
 
 #include "DataInspectorPluginInterface.h"
 
-extern TDataTypeConverterPluginInterface Int32ConverterIntf;
+extern volatile const int Int32ConverterClassID;

@@ -8,12 +8,12 @@ extern "C" {
 #include "DataInspectorShared.h"
 
 BOOL __stdcall GetDataTypeConverterClassIDs(
-    PConverterClassID* ClassIdsOrFactoryFuncs,
+    PConverterClassID* ClassIDsOrFactoryFuncs,
     int* Count);
 
 
 void* __stdcall CreateConverter(
-    TConverterClassID ClassIdOrFactoryFunc,
+    TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName,
     const wchar_t** FriendlyTypeName,
     TDataTypeWidth* Width,
