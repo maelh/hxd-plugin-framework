@@ -71,8 +71,8 @@ found in DataInspectorPluginInterface.pas and DataInspectorPluginInterface.h,
 respectively.
 It defines the necessary types and function pointers. Additional types are
 defined in DataInspectorShared.pas/.h. The only function that needs to be
-exported from the DLL is called GetDataTypeConverters (the correct function
-prototype being defined by TGetDataTypeConverters).
+exported from the DLL is called GetDataTypeConverterClassIDs (the correct function
+prototype being defined by TGetDataTypeConverterClassIDs).
 
 Memory management is simple: the plugin DLL manages its own memory and HxD does
 so with its own, as well. Therefore, there is no need to use a shared/central
