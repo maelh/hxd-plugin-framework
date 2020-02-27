@@ -26,10 +26,9 @@ the correct order already. If you want to keep it platform neutral, you can add
 a test for the machine endianness, and do nothing in ChangeByteOrder() calls,
 when its NewByteOrder parameter matches the machine's endianness.
 
-If a data type does not support byte reording (like UTF-8 or x86 assembly), it
+If a data type does not support byte reordering (like UTF-8 or x86 assembly), it
 should take care to set SupportedByteOrders accordingly, in the constructor
-function of type TDTCPCreateConverter or the constructor for the object oriented
-interface.
+function CreateConverter() or the constructor for the object oriented interface.
 
 ## String formatting according to the user's locale
 
