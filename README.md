@@ -58,7 +58,7 @@ HxD.exe                  \  both 32
 Plugins\<AnyName>.dll    /  or 64 bit
 ```
 
-Use HxD 2.3.1 or higher to test / develop your plugins (using the portable is
+Use HxD 2.4 or higher to test / develop your plugins (using the portable is
 simpler, since creating a Plugins directory does not require admin rights):
 
 https://mh-nexus.de/en/downloads.php?product=HxD20
