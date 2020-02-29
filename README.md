@@ -54,8 +54,8 @@ the right one in the Plugins folder for the bitness of HxD you have installed.
 
 Folder structure:
 ```
-HxD.exe                  \  both 32
-Plugins\<AnyName>.dll    /  or 64 bit
+HxD.exe                  \  both 32 or
+Plugins\<AnyName>.dll    /  both 64 bit
 ```
 
 Use HxD 2.4 or higher to test / develop your plugins (using the portable is
