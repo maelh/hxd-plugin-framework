@@ -67,12 +67,10 @@ https://mh-nexus.de/en/downloads.php?product=HxD20
 ### Non-OO interface: plain Delphi / plain C
 
 There is a basic procedural API, that works in plain Delphi and C, and can be
-found in DataInspectorPluginInterface.pas and DataInspectorPluginInterface.h,
+found in DataInspectorPluginInterface.inc and DataInspectorPluginInterface.h,
 respectively.
-It defines the necessary types and function pointers. Additional types are
-defined in DataInspectorShared.pas/.h. The only function that needs to be
-exported from the DLL is called GetDataTypeConverterClassIDs (the correct function
-prototype being defined by TGetDataTypeConverterClassIDs).
+DataInspectorPluginInterface.inc/.h declares all the functions that need to
+be exported. Additional types are declared in DataInspectorShared.pas/.h.
 
 Memory management is simple: the plugin DLL manages its own memory and HxD does
 so with its own, as well. Therefore, there is no need to use a shared/central
