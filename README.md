@@ -50,7 +50,7 @@ appear in the data inspector.
 If they are missing or have the wrong name, right-click on the data inspector,
 select "Options..." and click "Reset".
 A 32 bit and 64 bit version of the plugin is needed to support HxD fully; put
-the right one in the Plugin folder for the bitness of HxD you have installed.
+the right one in the Plugins folder for the bitness of HxD you have installed.
 
 Folder structure:
 ```
