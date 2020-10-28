@@ -18,7 +18,8 @@ void* __stdcall CreateConverter(
     const wchar_t** FriendlyTypeName,
     TDataTypeWidth* Width,
     int* MaxTypeSize,
-    TByteOrders* SupportedByteOrders);
+    TByteOrders* SupportedByteOrders,
+    BOOL* SupportsStrToBytes);
 
 void __stdcall DestroyConverter(
     void* ThisPtr);

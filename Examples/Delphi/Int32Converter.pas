@@ -37,9 +37,10 @@ begin
   FWidth := dtwFixed;
   FMaxTypeSize := sizeof(Int32);
   FSupportedByteOrders := [boLittleEndian, boBigEndian];
+  FSupportsStrToBytes := True;
 end;
 
-function ByteSwap(UI32: UInt32): UInt32; inline;
+function ReverseBytes(UI32: UInt32): UInt32; inline;
 begin
   Result :=
     ((UI32 and $000000FF) shl 24) or
@@ -54,7 +55,7 @@ begin
   inherited;
 
   if (TargetByteOrder = boBigEndian) and (ByteCount >= sizeof(Int32)) then
-    PUInt32(Bytes)^ := ByteSwap(PUInt32(Bytes)^);
+    PUInt32(Bytes)^ := ReverseBytes(PUInt32(Bytes)^);
 end;
 
 function TInt32Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;

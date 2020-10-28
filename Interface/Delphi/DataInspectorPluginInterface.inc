@@ -20,7 +20,8 @@ function CreateConverter
   out FriendlyTypeName: PWideChar;
   out Width: TDataTypeWidth;
   out MaxTypeSize: Integer;
-  out SupportedByteOrders: TByteOrders): Pointer; stdcall;
+  out SupportedByteOrders: TByteOrders;
+  out SupportsStrToBytes: LongBool): Pointer; stdcall;
 {$IFNDEF HXD_FUNC_PTRS}
   forward;
 {$ENDIF}

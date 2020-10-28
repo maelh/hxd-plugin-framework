@@ -28,6 +28,7 @@ protected:
     TDataTypeWidth FWidth;
     int FMaxTypeSize;
     TByteOrders FSupportedByteOrders;
+    BOOL FSupportsStrToBytes;
 
 private:
     std::wstring FLastReturnedString;
@@ -44,6 +45,7 @@ public:
     const TDataTypeWidth& GetWidth() { return FWidth; }
     const int& GetMaxTypeSize() { return FMaxTypeSize; }
     const TByteOrders& GetSupportedByteOrders() { return FSupportedByteOrders; }
+    const BOOL GetSupportsStrToBytes() { return FSupportsStrToBytes; }
 };
 
 

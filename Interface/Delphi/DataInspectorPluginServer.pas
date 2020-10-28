@@ -14,6 +14,7 @@ type
     FWidth: TDataTypeWidth;
     FMaxTypeSize: Integer;
     FSupportedByteOrders: TByteOrders;
+    FSupportsStrToBytes: Boolean;
   private
     FLastReturnedString: string;
     FLastReturnedByteArray: TBytes;
@@ -37,6 +38,7 @@ type
     property Width: TDataTypeWidth read FWidth;
     property MaxTypeSize: Integer read FMaxTypeSize;
     property SupportedByteOrders: TByteOrders read FSupportedByteOrders;
+    property SupportsStrToBytes: Boolean read FSupportsStrToBytes;
   end;
 
 
@@ -57,6 +59,7 @@ begin
   FWidth := Source.FWidth;
   FMaxTypeSize := Source.FMaxTypeSize;
   FSupportedByteOrders := Source.FSupportedByteOrders;
+  FSupportsStrToBytes := Source.FSupportsStrToBytes;
 
   FLastReturnedString := Source.FLastReturnedString;
   FLastReturnedByteArray := Source.FLastReturnedByteArray;
@@ -97,7 +100,8 @@ end;
 
 function CreateConverter(ClassIDOrFactoryFunc: TConverterClassID; out TypeName,
   FriendlyTypeName: PWideChar; out Width: TDataTypeWidth;
-  out MaxTypeSize: Integer; out SupportedByteOrders: TByteOrders): Pointer;
+  out MaxTypeSize: Integer; out SupportedByteOrders: TByteOrders;
+  out SupportsStrToBytes: LongBool): Pointer;
 var
   Converter: TExternalDataTypeConverter;
 begin
@@ -108,6 +112,7 @@ begin
   Width := Converter.Width;
   MaxTypeSize := Converter.MaxTypeSize;
   SupportedByteOrders := Converter.SupportedByteOrders;
+  SupportsStrToBytes := Converter.SupportsStrToBytes;
 
   Result := Converter;
 end;

@@ -11,6 +11,7 @@ void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
     FWidth = Source->FWidth;
     FMaxTypeSize = Source->FMaxTypeSize;
     FSupportedByteOrders = Source->FSupportedByteOrders;
+    FSupportsStrToBytes = Source->FSupportsStrToBytes;
 
     FLastReturnedString = Source->FLastReturnedString;
     FLastReturnedByteArray = Source->FLastReturnedByteArray;
@@ -18,7 +19,8 @@ void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
 
 void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
-    TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders)
+    TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders,
+    BOOL* SupportsStrToBytes)
 {
     TExternalDataTypeConverterFactoryFunction FactoryFunc =
         (TExternalDataTypeConverterFactoryFunction)ClassIDOrFactoryFunc;
@@ -30,6 +32,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     *Width = Converter->GetWidth();
     *MaxTypeSize = Converter->GetMaxTypeSize();
     *SupportedByteOrders = Converter->GetSupportedByteOrders();
+    *SupportsStrToBytes = Converter->GetSupportsStrToBytes();
 
     return Converter;
 }

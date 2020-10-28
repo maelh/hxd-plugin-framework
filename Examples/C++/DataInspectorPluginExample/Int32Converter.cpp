@@ -19,6 +19,7 @@ TInt32Converter::TInt32Converter()
     FWidth = dtwFixed;
     FMaxTypeSize = sizeof(int32_t);
     FSupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
+    FSupportsStrToBytes = TRUE;
 }
 
 void TInt32Converter::ChangeByteOrder(uint8_t* Bytes, int ByteCount,

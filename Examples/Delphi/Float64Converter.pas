@@ -38,9 +38,10 @@ begin
   FWidth := dtwFixed;
   FMaxTypeSize := sizeof(Float64);
   FSupportedByteOrders := [boLittleEndian, boBigEndian];
+  FSupportsStrToBytes := True;
 end;
 
-function ByteSwap(Value: UInt64): UInt64;
+function ReverseBytes(Value: UInt64): UInt64;
 begin
   PByte(@Result)[0] := PByte(@Value)[7];
   PByte(@Result)[1] := PByte(@Value)[6];
@@ -58,7 +59,7 @@ begin
   inherited;
 
   if (TargetByteOrder = boBigEndian) and (ByteCount >= sizeof(Float64)) then
-    PUInt64(Bytes)^ := ByteSwap(PUInt64(Bytes)^);
+    PUInt64(Bytes)^ := ReverseBytes(PUInt64(Bytes)^);
 end;
 
 function TFloat64Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;
