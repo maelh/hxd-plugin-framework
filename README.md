@@ -58,7 +58,7 @@ HxD.exe                  \  both 32 or
 Plugins\<AnyName>.dll    /  both 64 bit
 ```
 
-Use HxD 2.4 or higher to test / develop your plugins (using the portable is
+Use HxD 2.5 or higher to test / develop your plugins (using the portable is
 simpler, since creating a Plugins directory does not require admin rights):
 
 https://mh-nexus.de/en/downloads.php?product=HxD20
@@ -136,7 +136,7 @@ website), please contact me by mail, so we can discuss the details.
 
 ## License
 
-Copyright (C) 2019-2020 Maël Hörz
+Copyright (C) 2019-2021 Maël Hörz
 
 The plugin framework is [licensed under the MPL](LICENSE). But you are welcome
 to contact me if another open source license would be more suitable.
