@@ -133,6 +133,9 @@ Debugging works like debugging any DLL project.
 If you wrote a plugin that you would like to share (link from here or my
 website), please contact me by mail, so we can discuss the details.
 
+### Open source plugins
+
+- Greg Clare / DigicoolThings: disassembler plugin on GitHub(https://github.com/DigicoolThings/HxD_DasmDataInspectorPlugin) for MC6800, MC6809, 6502 and related CPUs.
 
 ## License
 
