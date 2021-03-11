@@ -13,11 +13,10 @@ type
     procedure ChangeByteOrder(Bytes: PByte; ByteCount: Integer;
       TargetByteOrder: TByteOrder); override;
     function BytesToStr(Bytes: PByte; ByteCount: Integer;
-      IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedByteCount: Integer;
+      FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
       var ConvertedStr: string): TBytesToStrError; override;
     function StrToBytes(const Str: string;
-      IntegerDisplayOption: TIntegerDisplayOption;
+      FormattingOptions: TFormattingOptions;
       var ConvertedBytes: TBytes): TStrToBytesError; override;
   end;
 
@@ -63,7 +62,7 @@ begin
 end;
 
 function TFloat64Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;
-  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedByteCount: Integer;
+  FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
   var ConvertedStr: string): TBytesToStrError;
 begin
   if ByteCount >= sizeof(Float64) then
@@ -84,7 +83,7 @@ begin
 end;
 
 function TFloat64Converter.StrToBytes(const Str: string;
-  IntegerDisplayOption: TIntegerDisplayOption;
+  FormattingOptions: TFormattingOptions;
   var ConvertedBytes: TBytes): TStrToBytesError;
 var
   D: Float64;

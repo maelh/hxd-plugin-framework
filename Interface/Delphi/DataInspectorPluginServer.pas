@@ -26,11 +26,10 @@ type
     procedure ChangeByteOrder(Bytes: PByte; ByteCount: Integer;
       TargetByteOrder: TByteOrder); virtual; abstract;
     function BytesToStr(Bytes: PByte; ByteCount: Integer;
-      IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedByteCount: Integer;
+      FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
       var ConvertedStr: string): TBytesToStrError; virtual; abstract;
     function StrToBytes(const Str: string;
-      IntegerDisplayOption: TIntegerDisplayOption;
+      FormattingOptions: TFormattingOptions;
       var ConvertedBytes: TBytes): TStrToBytesError; virtual; abstract;
 
     property TypeName: string read FTypeName;
@@ -79,13 +78,13 @@ begin
 end;
 
 function BytesToStr(ThisPtr: Pointer; Bytes: PByte; ByteCount: Integer;
-  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedByteCount: Integer;
+  FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
   out ConvertedStr: PWideChar): TBytesToStrError;
 begin
   TExternalDataTypeConverter(ThisPtr).FLastReturnedString := '';
 
   Result := TExternalDataTypeConverter(ThisPtr).BytesToStr(Bytes, ByteCount,
-    IntegerDisplayOption, ConvertedByteCount,
+    FormattingOptions, ConvertedByteCount,
     TExternalDataTypeConverter(ThisPtr).FLastReturnedString);
 
   ConvertedStr := PWideChar(TExternalDataTypeConverter(ThisPtr).FLastReturnedString);
@@ -123,13 +122,13 @@ begin
 end;
 
 function StrToBytes(ThisPtr: Pointer; const Str: PWideChar;
-  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedBytes: PByte;
+  FormattingOptions: TFormattingOptions; out ConvertedBytes: PByte;
   out ConvertedByteCount: Integer): TStrToBytesError;
 begin
   TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray := nil;
 
   Result := TExternalDataTypeConverter(ThisPtr).StrToBytes(Str,
-    IntegerDisplayOption,
+    FormattingOptions,
     TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
 
   ConvertedBytes := PByte(TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);

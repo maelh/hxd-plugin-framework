@@ -13,11 +13,10 @@ type
     procedure ChangeByteOrder(Bytes: PByte; ByteCount: Integer;
       TargetByteOrder: TByteOrder); override;
     function BytesToStr(Bytes: PByte; ByteCount: Integer;
-      IntegerDisplayOption: TIntegerDisplayOption;
-      out ConvertedByteCount: Integer;
+      FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
       var ConvertedStr: string): TBytesToStrError; override;
     function StrToBytes(const Str: string;
-      IntegerDisplayOption: TIntegerDisplayOption;
+      FormattingOptions: TFormattingOptions;
       var ConvertedBytes: TBytes): TStrToBytesError; override;
   end;
 
@@ -59,18 +58,23 @@ begin
 end;
 
 function TInt32Converter.BytesToStr(Bytes: PByte; ByteCount: Integer;
-  IntegerDisplayOption: TIntegerDisplayOption; out ConvertedByteCount: Integer;
+  FormattingOptions: TFormattingOptions; out ConvertedByteCount: Integer;
   var ConvertedStr: string): TBytesToStrError;
 begin
+  ConvertedStr := '';
+
   if ByteCount >= sizeof(Int32) then
   begin
-    case IntegerDisplayOption of
-      idoDecimal:
+    case FormattingOptions.IntegerBase of
+      ibDecimal:
         ConvertedStr := IntToStr(PInt32(Bytes)^);
-      idoHexadecimalUpperCase:
-        ConvertedStr := AnsiUpperCase(IntToHex(PInt32(Bytes)^, 0));
-      idoHexadecimalLowerCase:
-        ConvertedStr := AnsiLowerCase(IntToHex(PInt32(Bytes)^, 0));
+      ibHexadecimal:
+        case FormattingOptions.HexCasing of
+          lcUpperCase:
+            ConvertedStr := AnsiUpperCase(IntToHex(PInt32(Bytes)^, 0));
+          lcLowerCase:
+            ConvertedStr := AnsiLowerCase(IntToHex(PInt32(Bytes)^, 0));
+        end;
     end;
 
     ConvertedByteCount := sizeof(Int32);
@@ -85,15 +89,13 @@ begin
 end;
 
 function TInt32Converter.StrToBytes(const Str: string;
-  IntegerDisplayOption: TIntegerDisplayOption;
+  FormattingOptions: TFormattingOptions;
   var ConvertedBytes: TBytes): TStrToBytesError;
 var
   I: Int32;
   S: string;
 begin
-  if IntegerDisplayOption in [idoHexadecimalUpperCase,
-    idoHexadecimalLowerCase]
-  then
+  if FormattingOptions.IntegerBase = ibHexadecimal then
     S := '$' + Str
   else
     S := Str;
