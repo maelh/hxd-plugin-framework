@@ -52,10 +52,10 @@ select "Options..." and click "Reset".
 A 32 bit and 64 bit version of the plugin is needed to support HxD fully; put
 the right one in the Plugins folder for the bitness of HxD you have installed.
 
-Folder structure:
+Folder structure (*both files*, HxD.exe and the plugin DLL, *must be either 32 or 64 bit*):
 ```
-HxD.exe                  \  both 32 or
-Plugins\<AnyName>.dll    /  both 64 bit
+HxD.exe                  
+Plugins\<AnyName>.dll  
 ```
 
 Use HxD 2.5 or higher to test / develop your plugins (using the portable is
