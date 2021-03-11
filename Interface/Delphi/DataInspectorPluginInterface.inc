@@ -69,7 +69,7 @@ function BytesToStr
   (ThisPtr: Pointer;
   Bytes: PByte;
   ByteCount: Integer;
-  IntegerDisplayOption: TIntegerDisplayOption;
+  FormattingOptions: TFormattingOptions;
   out ConvertedByteCount: Integer;
   out ConvertedStr: PWideChar): TBytesToStrError; stdcall;
 {$IFNDEF HXD_FUNC_PTRS}
@@ -83,7 +83,7 @@ function StrToBytes
 {$ENDIF}
   (ThisPtr: Pointer;
   const Str: PWideChar;
-  IntegerDisplayOption: TIntegerDisplayOption;
+  FormattingOptions: TFormattingOptions;
   out ConvertedBytes: PByte;
   out ConvertedByteCount: Integer): TStrToBytesError; stdcall;
 {$IFNDEF HXD_FUNC_PTRS}
