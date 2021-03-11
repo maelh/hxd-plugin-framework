@@ -98,7 +98,7 @@ void __stdcall ChangeByteOrder(void* ThisPtr, uint8_t* Bytes, int ByteCount,
 }
 
 TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
-    int ByteCount, TIntegerDisplayOption IntegerDisplayOption,
+    int ByteCount, TFormattingOptions FormattingOptions,
     int* ConvertedByteCount, const wchar_t** ConvertedStr)
 {
     TInt32ConverterInstance* Converter = ((TInt32ConverterInstance*)ThisPtr);
@@ -107,22 +107,59 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
     {
         *ConvertedByteCount = sizeof(int32_t);
 
-        wchar_t* FormatStr = NULL;
-        switch (IntegerDisplayOption)
+        wchar_t FormatStr[10] = L"\0";
+        switch (FormattingOptions.IntegerBase)
         {
-        case idoDecimal:
-            FormatStr = L"%" PRId32;
+        case ibDecimal:
+            wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), L"%" PRId32);
             break;
-        case idoHexadecimalUpperCase:
-            FormatStr = L"%" PRIX32;
-            break;
-        case idoHexadecimalLowerCase:
-            FormatStr = L"%" PRIx32;
-            break;
+        case ibHexadecimal:
+            wchar_t* hexfmt = NULL;
+            switch (FormattingOptions.HexCasing)
+            {
+            case lcUpperCase:
+                hexfmt = L"%" PRIX32;
+                break;
+            case lcLowerCase:
+                hexfmt = L"%" PRIx32;
+                break;
+            }
+
+            switch (FormattingOptions.HexBaseIndication)
+            {
+            case hbiPascalAndMotorola:
+                wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), L"$");
+                wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), hexfmt);
+                break;
+            case hbiC:
+                wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), L"0x");
+                wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), hexfmt);
+                break;
+            case hbiIntelLeadingZero:
+            case hbiIntelNoLeadingZero:
+                wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), hexfmt);
+
+                if (FormattingOptions.HexCasing == lcUpperCase)
+                  wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), L"h");
+                else
+                    wcscat_s(FormatStr, ARRAY_LENGTH(FormatStr), L"H");
+                break;
+            }
         }
 
         swprintf(Converter->ConvertedStr, ARRAY_LENGTH(Converter->ConvertedStr),
             FormatStr, *(int32_t*)(Bytes));
+
+        if (FormattingOptions.HexBaseIndication == hbiIntelLeadingZero)
+            if (Converter->ConvertedStr[0] < L'0' || Converter->ConvertedStr[0] > L'9')
+            {
+                memmove_s(&Converter->ConvertedStr[1],
+                    sizeof(Converter->ConvertedStr) - 1,
+                    Converter->ConvertedStr,
+                    (wcslen(Converter->ConvertedStr) + 1) * sizeof(wchar_t));
+                Converter->ConvertedStr[0] = L'0';
+            }
+
         *ConvertedStr = Converter->ConvertedStr;
 
         return btseNone;
@@ -137,7 +174,7 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
 }
 
 TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
-    TIntegerDisplayOption IntegerDisplayOption, uint8_t** ConvertedBytes,
+    TFormattingOptions FormattingOptions, uint8_t** ConvertedBytes,
     int* ConvertedByteCount)
 {
     static_assert(sizeof(long) >= sizeof(int32_t),
@@ -146,13 +183,12 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     TInt32ConverterInstance* Converter = ((TInt32ConverterInstance*)ThisPtr);
 
     int base;
-    switch (IntegerDisplayOption)
+    switch (FormattingOptions.IntegerBase)
     {
-    case idoDecimal:
+    case ibDecimal:
         base = 10;
         break;
-    case idoHexadecimalUpperCase:
-    case idoHexadecimalLowerCase:
+    case ibHexadecimal:
         base = 16;
         break;
     }

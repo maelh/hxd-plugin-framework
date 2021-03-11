@@ -33,7 +33,7 @@ void TInt32Converter::ChangeByteOrder(uint8_t* Bytes, int ByteCount,
 }
 
 TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
-    TIntegerDisplayOption IntegerDisplayOption, int& ConvertedByteCount,
+    TFormattingOptions FormattingOptions, int& ConvertedByteCount,
     std::wstring& ConvertedStr)
 {
     if (ByteCount >= sizeof(int32_t))
@@ -41,16 +41,24 @@ TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
         ConvertedByteCount = sizeof(int32_t);
 
         std::wostringstream ss;
-        switch (IntegerDisplayOption)
+
+        switch (FormattingOptions.IntegerBase)
         {
-        case idoDecimal:
+        case ibDecimal:
             ss << std::dec;
             break;
-        case idoHexadecimalUpperCase:
-            ss << std::hex << std::uppercase;
-            break;
-        case idoHexadecimalLowerCase:
-            ss << std::hex << std::nouppercase;
+        case ibHexadecimal:
+            ss << std::hex;
+
+            switch (FormattingOptions.HexCasing)
+            {
+            case lcUpperCase:
+                ss << std::uppercase;
+                break;
+            case lcLowerCase:
+                ss << std::nouppercase;
+                break;
+            }
             break;
         }
 
@@ -60,33 +68,53 @@ TBytesToStrError TInt32Converter::BytesToStr(uint8_t* Bytes, int ByteCount,
         // DataInspectorPluginExample.c
         ss << *((int32_t*)Bytes);
         ConvertedStr = ss.str();
+        
+        if (FormattingOptions.IntegerBase == ibHexadecimal)
+            switch (FormattingOptions.HexBaseIndication)
+            {
+            case hbiPascalAndMotorola:
+                ConvertedStr = L"$" + ConvertedStr;
+                break;
+            case hbiC:
+                ConvertedStr = L"0x" + ConvertedStr;
+                break;
+            case hbiIntelNoLeadingZero:
+            case hbiIntelLeadingZero:
+                if (FormattingOptions.HexBaseIndication == hbiIntelLeadingZero &&
+                    (ConvertedStr[0] < L'0' || ConvertedStr[0] > L'9'))
+                    ConvertedStr = L'0' + ConvertedStr;
+
+                if (FormattingOptions.HexCasing == lcUpperCase)
+                    ConvertedStr += L"h";
+                else
+                    ConvertedStr += L"H";
+                break;
+            }
 
         return btseNone;
     }
     else
     {
         ConvertedByteCount = 0;
-        ConvertedStr = L""; // Warning: do not return NULL, this will throw exceptions
+        ConvertedStr = L""; // Warning: do not set to NULL, this will throw exceptions
 
         return btseBytesTooShort;
     }
 }
 
 TStrToBytesError TInt32Converter::StrToBytes(std::wstring Str,
-    TIntegerDisplayOption IntegerDisplayOption,
-    std::vector<uint8_t>& ConvertedBytes)
+    TFormattingOptions FormattingOptions, std::vector<uint8_t>& ConvertedBytes)
 {
     static_assert(sizeof(long) >= sizeof(int32_t),
         "str2int must return an integer of at least sizeof(int32_t)");
 
     int base;
-    switch (IntegerDisplayOption) 
+    switch (FormattingOptions.IntegerBase) 
     {
-    case idoDecimal:
+    case ibDecimal:
         base = 10;
         break;
-    case idoHexadecimalUpperCase:
-    case idoHexadecimalLowerCase:
+    case ibHexadecimal:
         base = 16;
         break;
     }
