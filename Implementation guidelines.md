@@ -97,6 +97,44 @@ Refer to the C and C++ examples, which handle this correctly and explicitly. The
 Delphi example handles this correctly as well, but it is done implicitly by
 Delphi's RTL.
 
+## Predefined localized text for error messages / GUI output
+
+With HxD 2.5, string variables were introduced, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.
+
+The syntax is as follows:
+`
+{s:<StrVarName>(Param0, Param1, Param2, ...)}
+`
+Similar to formatting of strings with printf/Format functions, the {s:...} pattern will be replaced by the translated/localized string.
+Parameter (ParamX) act like %s in formatting strings. More specifically, parameters are position dependent/indexed, so, for example, Param0 will act like %0:s.
+
+Parameters are always given as strings, delimited by double quotes ("). If the parameter should contain a double quote itself, it has to be escaped by writing it twice, i.e., to escape " write "".
+
+Example:
+`{s:Disassembly("6502")}`
+corresponds to a traditional formatting string like this:
+`SDisassembly = 'Disassembly (%0:s)'`
+and will appear to the user in the GUI as:
+`Disassembly (6502)`
+If the GUI language is German, it will show up in the GUI like this:
+`Disassemblat (6502)`
+
+Example with escaped double quotes:
+`{s:Disassembly("""6502""")}`
+will appear to the user in the GUI as:
+`Disassembly ("6502")`
+
+Finally, here is the list of string variables available in HxD 2.5 (and later):
+
+| Name        | Value            |
+|-------------|------------------|
+| Bitwidth    | %d bit           |
+| Binary      | Binary (%s)      |
+| Date        | %s date          |
+| Time        | %s time          |
+| TimeDate    | %s time & date   |
+| Disassembly | Disassembly (%s) |
+
 ## Which standard C/C++ type conversion function to use?
 
 ### Short version
