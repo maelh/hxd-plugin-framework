@@ -128,11 +128,11 @@ Finally, here is the list of string variables available in HxD 2.5 (and later):
 | Name        | Value - English (USA) | Value - German (Germany)   | ... (other languages) |
 |:------------|:----------------------|:---------------------------|:----------------------|
 | Bitwidth    | %d bit                | %d Bit                     | ...                   |
-| Binary      | Binary (%s)           | Disassemblat (%s)          | ...                   |
-| Date        | %s date               | Binär (%s)                 | ...                   |
-| Time        | %s time               | %s Datum                   | ...                   |
-| TimeDate    | %s time & date        | %s Uhrzeit                 | ...                   |
-| Disassembly | Disassembly (%s)      | %s Uhrzeit & Datum         | ...                   |
+| Binary      | Binary (%s)           | Binär (%s)                 | ...                   |
+| Date        | %s date               | %s Datum                   | ...                   |
+| Time        | %s time               | %s Uhrzeit                 | ...                   |
+| TimeDate    | %s time & date        | %s Uhrzeit & Datum         | ...                   |
+| Disassembly | Disassembly (%s)      | Disassemblat (%s)          | ...                   |
 
 ## Which standard C/C++ type conversion function to use?
 
