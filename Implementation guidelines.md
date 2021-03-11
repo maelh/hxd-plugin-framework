@@ -97,7 +97,7 @@ Refer to the C and C++ examples, which handle this correctly and explicitly. The
 Delphi example handles this correctly as well, but it is done implicitly by
 Delphi's RTL.
 
-## Predefined localized text for error messages / GUI output
+## Predefined localized text for messages / GUI output
 
 With HxD 2.5, string variables were introduced, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.  
 Why a new/different formatting style at all? To avoid conflicts, when you pass strings containing string variables to formatting functions inside of your plugin.
