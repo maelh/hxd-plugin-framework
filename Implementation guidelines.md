@@ -110,24 +110,24 @@ Parameter (ParamX) act like %s in formatting strings. More specifically, paramet
 
 Parameters are always given as strings, delimited by double quotes ("). If the parameter should contain a double quote itself, it has to be escaped by writing it twice, i.e., to escape " write "".
 
-Example:
-`{s:Disassembly("6502")}`
-corresponds to a traditional formatting string like this:
-`SDisassembly = 'Disassembly (%0:s)'`
-and will appear to the user in the GUI as:
-`Disassembly (6502)`
-If the GUI language is German, it will show up in the GUI like this:
-`Disassemblat (6502)`
-
-Example with escaped double quotes:
-`{s:Disassembly("""6502""")}`
-will appear to the user in the GUI as:
-`Disassembly ("6502")`
-
-Finally, here is the list of string variables available in HxD 2.5 (and later):
+Example:  
+`{s:Disassembly("6502")}`  
+corresponds to a traditional formatting string like this:  
+`SDisassembly = 'Disassembly (%0:s)'`  
+and will appear to the user in the GUI as:  
+`Disassembly (6502)`  
+If the GUI language is German, it will show up in the GUI like this:  
+`Disassemblat (6502)`  
+  
+Example with escaped double quotes:  
+`{s:Disassembly("""6502""")}`  
+will appear to the user in the GUI as:  
+`Disassembly ("6502")`  
+  
+Finally, here is the list of string variables available in HxD 2.5 (and later):  
 
 | Name        | Value            |
-|-------------|------------------|
+|:------------|:-----------------|
 | Bitwidth    | %d bit           |
 | Binary      | Binary (%s)      |
 | Date        | %s date          |
