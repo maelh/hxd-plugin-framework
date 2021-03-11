@@ -106,7 +106,7 @@ HxD 2.5 introduces *string variables*, to provide commonly used strings in local
 The syntax is as follows:  
 `{s:<StrVarName>(Param0, Param1, Param2, ...)}`  
 Similar to formatting of strings with printf/Format functions, the {s:...} pattern will be replaced by the translated/localized string.
-Parameter (ParamX) act like %s in formatting strings. More specifically, parameters are position dependent/indexed, so, for example, Param0 will act like %0:s.  
+Parameters (ParamX) act like %s in formatting strings. More specifically, parameters are position dependent/indexed, so, for example, Param0 will act like %0:s.  
   
 Parameters are always given as strings, delimited by double quotes ("). If the parameter should contain a double quote itself, it has to be escaped by writing it twice, i.e., to escape " write "".  
 
