@@ -56,7 +56,7 @@ void __stdcall ChangeByteOrder(void* ThisPtr, uint8_t* Bytes, int ByteCount,
 }
 
 TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
-    int ByteCount, TIntegerDisplayOption IntegerDisplayOption,
+    int ByteCount, TFormattingOptions FormattingOptions,
     int* ConvertedByteCount, const wchar_t** ConvertedStr)
 {
     TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
@@ -64,8 +64,7 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
     Converter->FLastReturnedString.clear();
 
     TBytesToStrError result = Converter->BytesToStr(Bytes, ByteCount,
-        IntegerDisplayOption, *ConvertedByteCount,
-        Converter->FLastReturnedString);
+        FormattingOptions, *ConvertedByteCount, Converter->FLastReturnedString);
 
     *ConvertedStr = Converter->FLastReturnedString.c_str();
 
@@ -73,14 +72,14 @@ TBytesToStrError __stdcall BytesToStr(void* ThisPtr, uint8_t* Bytes,
 }
 
 TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
-    TIntegerDisplayOption IntegerDisplayOption, uint8_t** ConvertedBytes,
+    TFormattingOptions FormattingOptions, uint8_t** ConvertedBytes,
     int* ConvertedByteCount)
 {
     TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
 
     Converter->FLastReturnedByteArray.clear();
 
-    TStrToBytesError result = Converter->StrToBytes(Str, IntegerDisplayOption,
+    TStrToBytesError result = Converter->StrToBytes(Str, FormattingOptions,
         Converter->FLastReturnedByteArray);
 
     if (Converter->FLastReturnedByteArray.size() > 0)

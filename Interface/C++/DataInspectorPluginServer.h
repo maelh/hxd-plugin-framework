@@ -16,10 +16,10 @@ public:
     virtual void ChangeByteOrder(uint8_t* Bytes, int ByteCount,
         TByteOrder TargetByteOrder) = 0;
     virtual TBytesToStrError BytesToStr(uint8_t* Bytes, int ByteCount,
-        TIntegerDisplayOption IntegerDisplayOption, int& ConvertedByteCount,
+        TFormattingOptions FormattingOptions, int& ConvertedByteCount,
         std::wstring& ConvertedStr) = 0;
     virtual TStrToBytesError StrToBytes(std::wstring Str,
-        TIntegerDisplayOption IntegerDisplayOption,
+        TFormattingOptions FormattingOptions,
         std::vector<uint8_t>& ConvertedBytes) = 0;
 
 protected:
@@ -34,9 +34,9 @@ private:
     std::wstring FLastReturnedString;
     std::vector<uint8_t> FLastReturnedByteArray;
     friend TBytesToStrError __stdcall BytesToStr(void*, uint8_t*, int,
-        TIntegerDisplayOption, int*, const wchar_t**);
+        TFormattingOptions, int*, const wchar_t**);
     friend TStrToBytesError __stdcall StrToBytes(void*, const wchar_t*,
-        TIntegerDisplayOption, uint8_t**, int*);
+        TFormattingOptions, uint8_t**, int*);
 
 // Getters
 public:

@@ -24,9 +24,24 @@ typedef enum TDataTypeWidth {
 	dtwVariable, dtwFixed
 } TDataTypeWidth;
 
-typedef enum TIntegerDisplayOption {
-	idoDecimal, idoHexadecimalUpperCase, idoHexadecimalLowerCase
-} TIntegerDisplayOption;
+typedef enum TIntegerBase {
+	ibDecimal, ibHexadecimal
+} TIntegerBase;
+
+typedef enum THexBaseIndication {
+	hbiPascalAndMotorola, hbiC, hbiIntelNoLeadingZero, hbiIntelLeadingZero
+} THexBaseIndication;
+
+typedef enum TLetterCase {
+	lcUpperCase, lcLowerCase
+} TLetterCase;
+
+typedef struct TFormattingOptions {
+	TIntegerBase IntegerBase;
+	THexBaseIndication HexBaseIndication;
+	TLetterCase HexCasing;
+	TLetterCase InstructionCasing;
+} TFormattingOptions;
 
 typedef enum TBytesToStrError {
 	btseNone, btseInvalidBytes, btseBytesTooShort

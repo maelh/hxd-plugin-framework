@@ -39,14 +39,14 @@ TBytesToStrError __stdcall BytesToStr(
     void* ThisPtr,
     uint8_t* Bytes,
     int ByteCount,
-    TIntegerDisplayOption IntegerDisplayOption,
+    TFormattingOptions FormattingOptions,
     int* ConvertedByteCount,
     const wchar_t** ConvertedStr);
 
 TStrToBytesError __stdcall StrToBytes(
     void* ThisPtr,
     const wchar_t* Str,
-    TIntegerDisplayOption IntegerDisplayOption,
+    TFormattingOptions FormattingOptions,
     uint8_t** ConvertedBytes,
     int* ConvertedByteCount);
 
