@@ -99,8 +99,8 @@ Delphi's RTL.
 
 ## Predefined localized text for messages / GUI output
 
-With HxD 2.5, string variables were introduced, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.  
-Why a new/different formatting style at all? To avoid conflicts, when you pass strings containing string variables to formatting functions inside of your plugin.
+HxD 2.5 introduces *string variables*, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.  
+Why introduce a new/different formatting style at all? To avoid conflicts, when you pass strings containing string variables to formatting functions, inside of your plugin. Or in other words, once traditional formatting functions are called within your plugin, all formatting specifiers are gone, so HxD would have no chance to replace the string variables.
 
 The syntax is as follows:  
 `{s:<StrVarName>(Param0, Param1, Param2, ...)}`  
