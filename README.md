@@ -128,6 +128,7 @@ Debugging works like debugging any DLL project.
   - Specify HxD.exe with its full path as command (Project options|Debugging|Command).
   Also set the working directory to the dir of HxD.exe.
 
+*Note:* Make sure that the generated DLL is really created in the Plugins folder of HxD. You have to adapt the project options accordingly!
 
 ## Publishing your plugin
 
