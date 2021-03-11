@@ -54,8 +54,8 @@ the right one in the Plugins folder for the bitness of HxD you have installed.
 
 Folder structure:
 ```
-HxD.exe                  
-Plugins\<AnyName>.dll  
+HxD.exe
+Plugins\<AnyName>.dll
 ```
 (**Both files**, HxD.exe and the plugin DLL, **must be either 32 or 64 bit**.)  
   
