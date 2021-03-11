@@ -99,16 +99,15 @@ Delphi's RTL.
 
 ## Predefined localized text for error messages / GUI output
 
-With HxD 2.5, string variables were introduced, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.
+With HxD 2.5, string variables were introduced, to provide commonly used strings in localized/translated versions. Ideally, this eliminates the need for translating texts for each plugin.  
+Why a new/different formatting style at all? To avoid conflicts, when you pass strings containing string variables to formatting functions inside of your plugin.
 
-The syntax is as follows:
-`
-{s:<StrVarName>(Param0, Param1, Param2, ...)}
-`
+The syntax is as follows:  
+`{s:<StrVarName>(Param0, Param1, Param2, ...)}`  
 Similar to formatting of strings with printf/Format functions, the {s:...} pattern will be replaced by the translated/localized string.
-Parameter (ParamX) act like %s in formatting strings. More specifically, parameters are position dependent/indexed, so, for example, Param0 will act like %0:s.
-
-Parameters are always given as strings, delimited by double quotes ("). If the parameter should contain a double quote itself, it has to be escaped by writing it twice, i.e., to escape " write "".
+Parameter (ParamX) act like %s in formatting strings. More specifically, parameters are position dependent/indexed, so, for example, Param0 will act like %0:s.  
+  
+Parameters are always given as strings, delimited by double quotes ("). If the parameter should contain a double quote itself, it has to be escaped by writing it twice, i.e., to escape " write "".  
 
 **Example:**  
 `{s:Disassembly("6502")}`  
@@ -126,14 +125,14 @@ will appear to the user in the GUI as:
   
 Finally, here is the list of string variables available in HxD 2.5 (and later):  
 
-| Name        | Value (English US) |
-|:------------|:-------------------|
-| Bitwidth    | %d bit             |
-| Binary      | Binary (%s)        |
-| Date        | %s date            |
-| Time        | %s time            |
-| TimeDate    | %s time & date     |
-| Disassembly | Disassembly (%s)   |
+| Name        | Value - English (USA) | Value - German (Germany)   | ... (other languages) |
+|:------------|:----------------------|:---------------------------|:----------------------|
+| Bitwidth    | %d bit                | %d Bit                     | ...                   |
+| Binary      | Binary (%s)           | Disassemblat (%s)          | ...                   |
+| Date        | %s date               | Binär (%s)                 | ...                   |
+| Time        | %s time               | %s Datum                   | ...                   |
+| TimeDate    | %s time & date        | %s Uhrzeit                 | ...                   |
+| Disassembly | Disassembly (%s)      | %s Uhrzeit & Datum         | ...                   |
 
 ## Which standard C/C++ type conversion function to use?
 
