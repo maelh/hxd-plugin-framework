@@ -133,7 +133,9 @@ Debugging works like debugging any DLL project.
 ## Publishing your plugin
 
 If you wrote a plugin that you would like to share (link from here or my
-website), please contact me by mail, so we can discuss the details.
+website), please contact me by mail, so we can discuss the details.  
+Even if you don't intend to publish it, letting me know what you did, would still be interesting to know, as that's part of the motivation to 
+make HxD.
 
 ### Open source plugins
 
