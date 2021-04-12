@@ -1,7 +1,7 @@
 # Plugin framework for HxD's data inspector
 
 This plugin framework allows to create extensions for HxD's data inspector, as
-plugin DLLs, which can be written in Delphi, C, or C++.
+plugin DLLs, which can be written in Delphi, C, C++, or [PureBasic (external)](https://www.purebasic.fr/english/viewtopic.php?f=12&t=76689).
 
 Any other language that can create DLLs and export C like functions should work
 equally well (but you would need to translate the C headers).
