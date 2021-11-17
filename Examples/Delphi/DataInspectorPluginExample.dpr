@@ -16,7 +16,9 @@ exports
   AssignConverter,
   ChangeByteOrder,
   BytesToStr,
-  StrToBytes;
+  StrToBytes,
+  AsInt64,
+  AsUInt64;
 
 begin
 end.

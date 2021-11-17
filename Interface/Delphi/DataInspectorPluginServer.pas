@@ -11,6 +11,7 @@ type
   strict protected
     FTypeName: string;
     FFriendlyTypeName: string;
+    FCategory: TTypeCategory;
     FWidth: TDataTypeWidth;
     FMaxTypeSize: Integer;
     FSupportedByteOrders: TByteOrders;
@@ -32,8 +33,16 @@ type
       FormattingOptions: TFormattingOptions;
       var ConvertedBytes: TBytes): TStrToBytesError; virtual; abstract;
 
+    function AsInt64(Bytes: PByte; ByteCount: Integer;
+      out ConvertedByteCount: Integer;
+      out ConvertedInt: Int64): TBytesToIntError; virtual; abstract;
+    function AsUInt64(Bytes: PByte; ByteCount: Integer;
+      out ConvertedByteCount: Integer;
+      out ConvertedInt: UInt64): TBytesToIntError; virtual; abstract;
+
     property TypeName: string read FTypeName;
     property FriendlyTypeName: string read FFriendlyTypeName;
+    property Category: TTypeCategory read FCategory;
     property Width: TDataTypeWidth read FWidth;
     property MaxTypeSize: Integer read FMaxTypeSize;
     property SupportedByteOrders: TByteOrders read FSupportedByteOrders;
@@ -55,6 +64,7 @@ begin
   inherited;
   FTypeName := Source.FTypeName;
   FFriendlyTypeName := Source.FFriendlyTypeName;
+  FCategory := Source.FCategory;
   FWidth := Source.FWidth;
   FMaxTypeSize := Source.FMaxTypeSize;
   FSupportedByteOrders := Source.FSupportedByteOrders;
@@ -98,8 +108,9 @@ begin
 end;
 
 function CreateConverter(ClassIDOrFactoryFunc: TConverterClassID; out TypeName,
-  FriendlyTypeName: PWideChar; out Width: TDataTypeWidth;
-  out MaxTypeSize: Integer; out SupportedByteOrders: TByteOrders;
+  FriendlyTypeName: PWideChar; out Category: TTypeCategory;
+  out Width: TDataTypeWidth; out MaxTypeSize: Integer;
+  out SupportedByteOrders: TByteOrders;
   out SupportsStrToBytes: LongBool): Pointer;
 var
   Converter: TExternalDataTypeConverter;
@@ -108,6 +119,7 @@ begin
 
   TypeName := PWideChar(Converter.TypeName);
   FriendlyTypeName := PWideChar(Converter.FriendlyTypeName);
+  Category := Converter.Category;
   Width := Converter.Width;
   MaxTypeSize := Converter.MaxTypeSize;
   SupportedByteOrders := Converter.SupportedByteOrders;
@@ -133,6 +145,20 @@ begin
 
   ConvertedBytes := PByte(TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
   ConvertedByteCount := Length(TExternalDataTypeConverter(ThisPtr).FLastReturnedByteArray);
+end;
+
+function AsInt64(ThisPtr: Pointer; Bytes: PByte; ByteCount: Integer;
+  out ConvertedByteCount: Integer; out ConvertedInt: Int64): TBytesToIntError;
+begin
+  Result := TExternalDataTypeConverter(ThisPtr).AsInt64(Bytes, ByteCount,
+    ConvertedByteCount, ConvertedInt);
+end;
+
+function AsUInt64(ThisPtr: Pointer; Bytes: PByte; ByteCount: Integer;
+  out ConvertedByteCount: Integer; out ConvertedInt: UInt64): TBytesToIntError;
+begin
+  Result := TExternalDataTypeConverter(ThisPtr).AsUInt64(Bytes, ByteCount,
+    ConvertedByteCount, ConvertedInt);
 end;
 
 

@@ -18,6 +18,7 @@ function CreateConverter
   (ClassIDOrFactoryFunc: TConverterClassID;
   out TypeName: PWideChar;
   out FriendlyTypeName: PWideChar;
+  out Category: TTypeCategory;
   out Width: TDataTypeWidth;
   out MaxTypeSize: Integer;
   out SupportedByteOrders: TByteOrders;
@@ -89,3 +90,32 @@ function StrToBytes
 {$IFNDEF HXD_FUNC_PTRS}
   forward;
 {$ENDIF}
+
+{$IFDEF HXD_FUNC_PTRS}
+  TAsInt64 = function
+{$ELSE}
+function AsInt64
+{$ENDIF}
+  (ThisPtr: Pointer;
+  Bytes: PByte;
+  ByteCount: Integer;
+  out ConvertedByteCount: Integer;
+  out ConvertedInt: Int64): TBytesToIntError; stdcall;
+{$IFNDEF HXD_FUNC_PTRS}
+  forward;
+{$ENDIF}
+
+{$IFDEF HXD_FUNC_PTRS}
+  TAsUInt64 = function
+{$ELSE}
+function AsUInt64
+{$ENDIF}
+  (ThisPtr: Pointer;
+  Bytes: PByte;
+  ByteCount: Integer;
+  out ConvertedByteCount: Integer;
+  out ConvertedInt: UInt64): TBytesToIntError; stdcall;
+{$IFNDEF HXD_FUNC_PTRS}
+  forward;
+{$ENDIF}
+

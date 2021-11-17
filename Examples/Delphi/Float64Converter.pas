@@ -34,6 +34,7 @@ begin
   inherited;
   FTypeName := 'Delphi - Float64';
   FFriendlyTypeName := FTypeName;
+  FCategory := tcFloat;
   FWidth := dtwFixed;
   FMaxTypeSize := sizeof(Float64);
   FSupportedByteOrders := [boLittleEndian, boBigEndian];

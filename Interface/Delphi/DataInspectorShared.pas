@@ -5,13 +5,17 @@ interface
 {$MINENUMSIZE 4}
 
 type
+  TTypeCategory = (tcUnknown, tcBitSequence, tcSignedInteger, tcUnsignedInteger,
+    tcFloat, tcCharacter, tcCharacterString, tcDate, tcTime, tcDateTime,
+    tcAssembly);
+
   TByteOrder = (boLittleEndian, boBigEndian);
   TByteOrders = set of TByteOrder;
   TDataTypeWidth = (dtwVariable, dtwFixed);
 
   TIntegerBase = (ibDecimal, ibHexadecimal);
-  THexBaseIndication = (hbiPascalAndMotorola, hbiC, hbiIntelNoLeadingZero,
-    hbiIntelLeadingZero);
+  THexBaseIndication = (hbiNone, hbiPascalAndMotorola, hbiC,
+    hbiIntelNoLeadingZero, hbiIntelLeadingZero);
   TLetterCase = (lcUpperCase, lcLowerCase);
 
   TFormattingOptions = record
@@ -31,6 +35,8 @@ type
   TStrToBytesError = (stbeNone, stbeInvalidString, stbeUnderflow, stbeOverflow,
     stbeOutOfRange // if unclear whether underflow or overflow
   );
+
+  TBytesToIntError = (btieNone, btieBytesTooShort);
 
   PConverterClassID = ^TConverterClassID;
   TConverterClassID = type Pointer;

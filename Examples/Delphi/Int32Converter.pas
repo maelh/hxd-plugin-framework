@@ -18,6 +18,10 @@ type
     function StrToBytes(const Str: string;
       FormattingOptions: TFormattingOptions;
       var ConvertedBytes: TBytes): TStrToBytesError; override;
+
+    function AsInt64(Bytes: PByte; ByteCount: Integer;
+      out ConvertedByteCount: Integer;
+      out ConvertedInt: Int64): TBytesToIntError; override;
   end;
 
 implementation
@@ -33,6 +37,7 @@ begin
   inherited;
   FTypeName := 'Delphi - Int32';
   FFriendlyTypeName := FTypeName;
+  FCategory := tcSignedInteger;
   FWidth := dtwFixed;
   FMaxTypeSize := sizeof(Int32);
   FSupportedByteOrders := [boLittleEndian, boBigEndian];
@@ -69,11 +74,30 @@ begin
       ibDecimal:
         ConvertedStr := IntToStr(PInt32(Bytes)^);
       ibHexadecimal:
-        case FormattingOptions.HexCasing of
-          lcUpperCase:
-            ConvertedStr := AnsiUpperCase(IntToHex(PInt32(Bytes)^, 0));
-          lcLowerCase:
-            ConvertedStr := AnsiLowerCase(IntToHex(PInt32(Bytes)^, 0));
+        begin
+          case FormattingOptions.HexCasing of
+            lcUpperCase:
+              ConvertedStr := AnsiUpperCase(IntToHex(PInt32(Bytes)^, 0));
+            lcLowerCase:
+              ConvertedStr := AnsiLowerCase(IntToHex(PInt32(Bytes)^, 0));
+          end;
+
+          case FormattingOptions.HexBaseIndication of
+            hbiPascalAndMotorola:
+              ConvertedStr := '$' + ConvertedStr;
+            hbiC:
+              ConvertedStr := '0x' + ConvertedStr;
+            hbiIntelLeadingZero, hbiIntelNoLeadingZero:
+              begin
+                if FormattingOptions.HexCasing = lcUpperCase then
+                  ConvertedStr := ConvertedStr + 'h'
+                else
+                  ConvertedStr := ConvertedStr + 'H';
+                if FormattingOptions.HexBaseIndication = hbiIntelLeadingZero then
+                  if (ConvertedStr[1] < '0') or (ConvertedStr[1] > '9') then
+                    ConvertedStr := '0' + ConvertedStr;
+              end;
+          end;
         end;
     end;
 
@@ -110,6 +134,23 @@ begin
   else
     // TryStrToInt() does not specify what error occured => return generic error
     Result := stbeInvalidString;
+end;
+
+function TInt32Converter.AsInt64(Bytes: PByte; ByteCount: Integer;
+  out ConvertedByteCount: Integer; out ConvertedInt: Int64): TBytesToIntError;
+begin
+  if ByteCount >= sizeof(Int32) then
+  begin
+    ConvertedInt := PInt32(Bytes)^;
+    ConvertedByteCount := sizeof(Int32);
+    Result := btieNone;
+  end
+  else
+  begin
+    ConvertedInt := 0;
+    ConvertedByteCount := 0;
+    Result := btieBytesTooShort;
+  end;
 end;
 
 initialization
