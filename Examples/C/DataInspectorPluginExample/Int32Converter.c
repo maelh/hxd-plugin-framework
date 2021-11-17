@@ -47,8 +47,8 @@ typedef struct TInt32ConverterInstance {
 
 void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
-    TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders,
-    BOOL* SupportsStrToBytes)
+    TTypeCategory* Category, TDataTypeWidth* Width, int* MaxTypeSize,
+    TByteOrders* SupportedByteOrders, BOOL* SupportsStrToBytes)
 {
     // ClassIDOrFactoryFunc can be used to delegate creation to constructor
     // functions as needed. See the C++ plugin for an example.
@@ -59,6 +59,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
 
     *TypeName = L"C - Int32";
     *FriendlyTypeName = *TypeName;
+    *Category = tcSignedInteger;
     *Width = dtwFixed;
     *MaxTypeSize = sizeof(int32_t);
     *SupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
@@ -224,6 +225,31 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     }
 
     return result;
+}
+
+TBytesToIntError __stdcall AsInt64(void* ThisPtr, uint8_t* Bytes, int ByteCount,
+    int* ConvertedByteCount, int64_t* ConvertedInt)
+{
+    if (ByteCount >= sizeof(int32_t))
+    {
+        *ConvertedByteCount = sizeof(int32_t);
+        *ConvertedInt = *(int32_t*)(Bytes);
+        return btieNone;
+    }
+    else
+    {
+        *ConvertedByteCount = 0;
+        *ConvertedInt = 0;
+
+        return btieBytesTooShort;
+    }
+}
+
+// not supported, just a dummy function to satisfy export requirements
+TBytesToIntError __stdcall AsUInt64(void* ThisPtr, uint8_t* Bytes,
+    int ByteCount, int* ConvertedByteCount, uint64_t* ConvertedInt)
+{
+    return btieNone;
 }
 
 

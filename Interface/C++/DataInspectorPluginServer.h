@@ -22,9 +22,15 @@ public:
         TFormattingOptions FormattingOptions,
         std::vector<uint8_t>& ConvertedBytes) = 0;
 
+    virtual TBytesToIntError AsInt64(uint8_t* Bytes, int ByteCount,
+        int& ConvertedByteCount, int64_t& ConvertedInt) = 0;
+    virtual TBytesToIntError AsUInt64(uint8_t* Bytes, int ByteCount,
+        int& ConvertedByteCount, uint64_t& ConvertedInt) = 0;
+
 protected:
     std::wstring FTypeName;
     std::wstring FFriendlyTypeName;
+    TTypeCategory FCategory;
     TDataTypeWidth FWidth;
     int FMaxTypeSize;
     TByteOrders FSupportedByteOrders;
@@ -42,6 +48,7 @@ private:
 public:
     const std::wstring& GetTypeName() { return FTypeName; }
     const std::wstring& GetFriendlyTypeName() { return FFriendlyTypeName; }
+    const TTypeCategory& GetCategory() { return FCategory; }
     const TDataTypeWidth& GetWidth() { return FWidth; }
     const int& GetMaxTypeSize() { return FMaxTypeSize; }
     const TByteOrders& GetSupportedByteOrders() { return FSupportedByteOrders; }

@@ -8,3 +8,5 @@ EXPORTS
 	  ChangeByteOrder @5
 	  BytesToStr @6
 	  StrToBytes @7
+	  AsInt64 @8
+	  AsUInt64 @9

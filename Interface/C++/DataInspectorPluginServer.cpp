@@ -8,6 +8,7 @@ void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
 {
     FTypeName = Source->FTypeName;
     FFriendlyTypeName = Source->FFriendlyTypeName;
+    FCategory = Source->FCategory;
     FWidth = Source->FWidth;
     FMaxTypeSize = Source->FMaxTypeSize;
     FSupportedByteOrders = Source->FSupportedByteOrders;
@@ -19,8 +20,8 @@ void TExternalDataTypeConverter::Assign(TExternalDataTypeConverter* Source)
 
 void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
-    TDataTypeWidth* Width, int* MaxTypeSize, TByteOrders* SupportedByteOrders,
-    BOOL* SupportsStrToBytes)
+    TTypeCategory* Category, TDataTypeWidth* Width, int* MaxTypeSize,
+    TByteOrders* SupportedByteOrders, BOOL* SupportsStrToBytes)
 {
     TExternalDataTypeConverterFactoryFunction FactoryFunc =
         (TExternalDataTypeConverterFactoryFunction)ClassIDOrFactoryFunc;
@@ -29,6 +30,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
 
     *TypeName = Converter->GetTypeName().c_str();
     *FriendlyTypeName = Converter->GetFriendlyTypeName().c_str();
+    *Category = Converter->GetCategory();
     *Width = Converter->GetWidth();
     *MaxTypeSize = Converter->GetMaxTypeSize();
     *SupportedByteOrders = Converter->GetSupportedByteOrders();
@@ -89,6 +91,24 @@ TStrToBytesError __stdcall StrToBytes(void* ThisPtr, const wchar_t* Str,
     *ConvertedByteCount = (int)Converter->FLastReturnedByteArray.size();
 
     return result;
+}
+
+TBytesToIntError __stdcall AsInt64(void* ThisPtr, uint8_t* Bytes,
+    int ByteCount, int* ConvertedByteCount, int64_t* ConvertedInt)
+{
+    TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
+
+    return Converter->AsInt64(Bytes, ByteCount, *ConvertedByteCount,
+        *ConvertedInt);
+}
+
+TBytesToIntError __stdcall AsUInt64(void* ThisPtr, uint8_t* Bytes,
+    int ByteCount, int* ConvertedByteCount, uint64_t* ConvertedInt)
+{
+    TExternalDataTypeConverter* Converter = (TExternalDataTypeConverter*)ThisPtr;
+
+    return Converter->AsUInt64(Bytes, ByteCount, *ConvertedByteCount,
+        *ConvertedInt);
 }
 
 std::vector<TConverterClassID> InternalClassIDsOrFactoryFuncs;

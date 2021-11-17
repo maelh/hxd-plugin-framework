@@ -16,6 +16,7 @@ void* __stdcall CreateConverter(
     TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName,
     const wchar_t** FriendlyTypeName,
+    TTypeCategory* Category,
     TDataTypeWidth* Width,
     int* MaxTypeSize,
     TByteOrders* SupportedByteOrders,
@@ -49,6 +50,20 @@ TStrToBytesError __stdcall StrToBytes(
     TFormattingOptions FormattingOptions,
     uint8_t** ConvertedBytes,
     int* ConvertedByteCount);
+
+TBytesToIntError __stdcall AsInt64(
+    void* ThisPtr,
+    uint8_t* Bytes,
+    int ByteCount,
+    int* ConvertedByteCount,
+    int64_t* ConvertedInt);
+
+TBytesToIntError __stdcall AsUInt64(
+    void* ThisPtr,
+    uint8_t* Bytes,
+    int ByteCount,
+    int* ConvertedByteCount,
+    uint64_t* ConvertedInt);
 
 #ifdef __cplusplus  
 }

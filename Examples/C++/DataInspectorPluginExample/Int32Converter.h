@@ -19,4 +19,9 @@ public:
     TStrToBytesError StrToBytes(std::wstring Str,
         TFormattingOptions FormattingOptions,
         std::vector<uint8_t>& ConvertedBytes) override;
+
+    TBytesToIntError AsInt64(uint8_t* Bytes, int ByteCount,
+        int& ConvertedByteCount, int64_t& ConvertedInt) override;
+    TBytesToIntError AsUInt64(uint8_t* Bytes, int ByteCount,
+        int& ConvertedByteCount, uint64_t& ConvertedInt) override;
 };

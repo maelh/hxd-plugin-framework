@@ -16,6 +16,7 @@ TInt32Converter::TInt32Converter()
 {
     FTypeName = L"C++ - Int32";
     FFriendlyTypeName = FTypeName;
+    FCategory = tcSignedInteger;
     FWidth = dtwFixed;
     FMaxTypeSize = sizeof(int32_t);
     FSupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
@@ -144,4 +145,29 @@ TStrToBytesError TInt32Converter::StrToBytes(std::wstring Str,
     }
 
     return result;
+}
+
+TBytesToIntError TInt32Converter::AsInt64(uint8_t* Bytes, int ByteCount,
+    int& ConvertedByteCount, int64_t& ConvertedInt)
+{
+    if (ByteCount >= sizeof(int32_t))
+    {
+        ConvertedByteCount = sizeof(int32_t);
+        ConvertedInt = *(int32_t*)(Bytes);
+        return btieNone;
+    }
+    else
+    {
+        ConvertedByteCount = 0;
+        ConvertedInt = 0;
+
+        return btieBytesTooShort;
+    }
+}
+
+// not supported, just a dummy function to satisfy class requirements
+TBytesToIntError TInt32Converter::AsUInt64(uint8_t* Bytes, int ByteCount,
+    int& ConvertedByteCount, uint64_t& ConvertedInt)
+{
+    return btieNone;
 }

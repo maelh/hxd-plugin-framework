@@ -6,8 +6,13 @@ extern "C" {
 
 #include "inttypes.h"
 
+typedef enum TTypeCategory {
+    tcUnknown, tcBitSequence, tcSignedInteger, tcUnsignedInteger, tcFloat,
+    tcCharacter, tcCharacterString, tcDate, tcTime, tcDateTime,	tcAssembly
+} TTypeCategory;
+
 typedef enum TByteOrder {
-	boLittleEndian, boBigEndian
+    boLittleEndian, boBigEndian
 } TByteOrder;
 
 // TByteOrders = set of TByteOrder // a set of flags
@@ -21,36 +26,41 @@ typedef enum TByteOrder {
 typedef uint8_t TByteOrders; 
 
 typedef enum TDataTypeWidth {
-	dtwVariable, dtwFixed
+    dtwVariable, dtwFixed
 } TDataTypeWidth;
 
 typedef enum TIntegerBase {
-	ibDecimal, ibHexadecimal
+    ibDecimal, ibHexadecimal
 } TIntegerBase;
 
 typedef enum THexBaseIndication {
-	hbiPascalAndMotorola, hbiC, hbiIntelNoLeadingZero, hbiIntelLeadingZero
+    hbiNone, hbiPascalAndMotorola, hbiC, hbiIntelNoLeadingZero,
+    hbiIntelLeadingZero
 } THexBaseIndication;
 
 typedef enum TLetterCase {
-	lcUpperCase, lcLowerCase
+    lcUpperCase, lcLowerCase
 } TLetterCase;
 
 typedef struct TFormattingOptions {
-	TIntegerBase IntegerBase;
-	THexBaseIndication HexBaseIndication;
-	TLetterCase HexCasing;
-	TLetterCase InstructionCasing;
+    TIntegerBase IntegerBase;
+    THexBaseIndication HexBaseIndication;
+    TLetterCase HexCasing;
+    TLetterCase InstructionCasing;
 } TFormattingOptions;
 
 typedef enum TBytesToStrError {
-	btseNone, btseInvalidBytes, btseBytesTooShort
+    btseNone, btseInvalidBytes, btseBytesTooShort
 } TBytesToStrError;
 
 typedef enum TStrToBytesError {
-	stbeNone, stbeInvalidString, stbeUnderflow, stbeOverflow,
-	stbeOutOfRange // if unclear whether underflow or overflow
+    stbeNone, stbeInvalidString, stbeUnderflow, stbeOverflow,
+    stbeOutOfRange // if unclear whether underflow or overflow
 } TStrToBytesError;
+
+typedef enum TBytesToIntError {
+    btieNone, btieBytesTooShort
+} TBytesToIntError;
 
 typedef void* TConverterClassID;
 typedef TConverterClassID* PConverterClassID;
