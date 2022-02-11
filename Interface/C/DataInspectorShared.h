@@ -62,6 +62,10 @@ typedef enum TBytesToIntError {
     btieNone, btieBytesTooShort
 } TBytesToIntError;
 
+typedef enum TCreateConverterFlags {
+    ccfSupportsStrToBytes = 0x00001
+} TCreateConverterFlags;
+
 typedef void* TConverterClassID;
 typedef TConverterClassID* PConverterClassID;
 

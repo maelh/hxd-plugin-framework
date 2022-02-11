@@ -111,7 +111,7 @@ function CreateConverter(ClassIDOrFactoryFunc: TConverterClassID; out TypeName,
   FriendlyTypeName: PWideChar; out Category: TTypeCategory;
   out Width: TDataTypeWidth; out MaxTypeSize: Integer;
   out SupportedByteOrders: TByteOrders;
-  out SupportsStrToBytes: LongBool): Pointer;
+  out Flags: Integer): Pointer;
 var
   Converter: TExternalDataTypeConverter;
 begin
@@ -123,7 +123,7 @@ begin
   Width := Converter.Width;
   MaxTypeSize := Converter.MaxTypeSize;
   SupportedByteOrders := Converter.SupportedByteOrders;
-  SupportsStrToBytes := Converter.SupportsStrToBytes;
+  Flags := IfThen(Converter.SupportsStrToBytes, ccfSupportsStrToBytes, 0);
 
   Result := Converter;
 end;

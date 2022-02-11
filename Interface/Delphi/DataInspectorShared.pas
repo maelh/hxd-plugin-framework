@@ -38,6 +38,8 @@ type
 
   TBytesToIntError = (btieNone, btieBytesTooShort);
 
+  TCreateConverterFlags = (ccfSupportsStrToBytes = 0x00001);
+
   PConverterClassID = ^TConverterClassID;
   TConverterClassID = type Pointer;
 

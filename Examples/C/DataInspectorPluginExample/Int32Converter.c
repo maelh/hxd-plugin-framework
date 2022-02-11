@@ -48,7 +48,7 @@ typedef struct TInt32ConverterInstance {
 void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     const wchar_t** TypeName, const wchar_t** FriendlyTypeName,
     TTypeCategory* Category, TDataTypeWidth* Width, int* MaxTypeSize,
-    TByteOrders* SupportedByteOrders, BOOL* SupportsStrToBytes)
+    TByteOrders* SupportedByteOrders, int* Flags)
 {
     // ClassIDOrFactoryFunc can be used to delegate creation to constructor
     // functions as needed. See the C++ plugin for an example.
@@ -63,7 +63,7 @@ void* __stdcall CreateConverter(TConverterClassID ClassIDOrFactoryFunc,
     *Width = dtwFixed;
     *MaxTypeSize = sizeof(int32_t);
     *SupportedByteOrders = 1 << boLittleEndian | 1 << boBigEndian;
-    *SupportsStrToBytes = TRUE;
+    *Flags = ccfSupportsStrToBytes;
 
     // create instance specific storage
     TInt32ConverterInstance* Converter = malloc(sizeof(TInt32ConverterInstance));

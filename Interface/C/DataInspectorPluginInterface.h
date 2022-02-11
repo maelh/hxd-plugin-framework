@@ -20,7 +20,7 @@ void* __stdcall CreateConverter(
     TDataTypeWidth* Width,
     int* MaxTypeSize,
     TByteOrders* SupportedByteOrders,
-    BOOL* SupportsStrToBytes);
+    int* Flags);
 
 void __stdcall DestroyConverter(
     void* ThisPtr);
